@@ -1,10 +1,10 @@
 # CompilerAssignment
-##Lecture Information   
+## Lecture Information   
  - Title: Compiler   
  - Instructor: Prof. Hyosu Kim   
  - Organization: College of Software, Chung-Ang University   
-##Project Explanation   
+## Project Explanation   
  - Goal: Implement a lexical analyzer for simplified C programming language   
-##Members   
+## Members   
  - Sejin Kim   
  - EunSol Kim   
