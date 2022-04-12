@@ -30,7 +30,8 @@ class LexicalAnalyzer(object):
     def __init__(self, file):
         self.input_file = file
 
-    def check_id(self, id):
+    def check_id(self, id, char):
+        """print("ididididiid: "+id)
         T = ["T0", "T1", "T2", "T3"]
         wdT = T[0]  # working directory T
 
@@ -42,7 +43,12 @@ class LexicalAnalyzer(object):
         if len(id) == 1:
             head = id
 
-        while True:
+
+        z = len(id)
+        while z>0:
+            z = z-1
+            print("length of id: " + str(len(id))+" "+id)
+            print("length of buf_id: "+str(len(buf_id))+" "+buf_id)
             if len(id) > 1:
                 if len(buf_id) != 0:
                     head = buf_id[0]
@@ -56,7 +62,8 @@ class LexicalAnalyzer(object):
                     wdT = T[1]
                     result = result + head
                     if read_all:
-                        head = self.input_file.read(1)   # 1 byte input
+                        head = self.input_file.read(1)
+                        print("id T[2]->T[3] head : "+head)# 1 byte input
 
                 else:
                     return result, False, head
@@ -67,12 +74,14 @@ class LexicalAnalyzer(object):
                     result = result + head
                     if read_all:
                         head = self.input_file.read(1)
+                        print("id T[1]->T[2] head : "+head)
 
                 elif head in self.DIGIT:
                     wdT = T[3]
                     result = result + head
                     if read_all:
                         head = self.input_file.read(1)
+                        print("id T[1]->T[3] head : " + head)
 
                 else:
                     return result, True, head
@@ -83,12 +92,14 @@ class LexicalAnalyzer(object):
                     result = result + head
                     if read_all:
                         head = self.input_file.read(1)
+                        print("id T[2]->T[2] head : " + head)
 
                 elif head in self.DIGIT:
                     wdT = T[3]
                     result = result + head
                     if read_all:
                         head = self.input_file.read(1)
+                        print("id T[2]->T[3] head : " + head)
 
                 else:
                     return result, True, head
@@ -99,12 +110,14 @@ class LexicalAnalyzer(object):
                     result = result + head
                     if read_all:
                         head = self.input_file.read(1)
+                        print("id T[3]->T[2] head : " + head)
 
                 elif head in self.DIGIT:
                     wdT = T[3]
                     result = result + head
                     if read_all:
                         head = self.input_file.read(1)
+                        print("id T[3]->T[3] head : " + head)
 
                 else:
                     return result, True, head
@@ -115,7 +128,46 @@ class LexicalAnalyzer(object):
         if wdT == T[1] or wdT == T[2] or wdT == T[3]:
             return result, True, head
         else:
-            return result, False, head
+            return result, False, head"""
+        sub_string = ""
+        symbol = self.LETTER + self.ZERO + self.NON_ZERO + ['_']
+        i = 0
+        j = 0
+        final = [1, 2, 3, 4, 5, 6]
+        transition_table = [[1, -1, -1, 2], [3, 4, 5, 6], [3, 4, 5, 6], [3, 4, 5, 6], [3, 4, 5, 6], [3, 4, 5, 6], [3, 4, 5, 6]]
+
+        if char == "":
+            char = self.input_file.read(1)
+
+        # Read string
+        while char in symbol:
+            id = id + char
+            char = self.input_file.read(1)
+
+        # Analyze
+        for c in id:
+            if c in self.LETTER:
+                j = 0
+            elif c in self.ZERO:
+                j = 1
+            elif c in self.NON_ZERO:
+                j = 2
+            elif c in ['_']:
+                j = 3
+            else:
+                return sub_string, False, char
+
+            tmp_i = i
+            i = transition_table[i][j]
+            sub_string = sub_string + c
+
+            if i == -1:
+                return sub_string, False, char
+
+        if i in final:
+            return sub_string, True, char
+        else:
+            return sub_string, False, char
 
     def check_int(self, integer):
         T = ["T0", "T1", "T2", "T3", "T4", "T5"]
@@ -129,6 +181,8 @@ class LexicalAnalyzer(object):
             head = integer
 
         while True:
+            print("integer of length: " + str(len(integer)) + " " + integer)
+            print("buf_integer of length " + str(len(buf_integer)) + " " + buf_integer)
             if len(integer) > 1:
                 if len(buf_integer) != 0:
                     head = buf_integer[0]
@@ -140,24 +194,28 @@ class LexicalAnalyzer(object):
             print("head: "+head)
 
             if wdT == T[0]:
-                print("check T[0]: " + head+ integer)
+                #print("check T[0]: " + head+ integer)
                 if head == "-":
+                    print("ASDFASFASDFASFASFDAS")
                     wdT = T[1]
                     result = result + head
                     if read_all:
                         head = self.input_file.read(1)
+                        print("id T[0]->T[1] head : " + head)
 
                 elif head in self.ZERO:
                     wdT = T[2]
                     result = result + head
                     if read_all:
                         head = self.input_file.read(1)
+                        print("id T[0]->T[2] head : " + head)
 
                 elif head in self.NON_ZERO:
                     wdT = T[3]
                     result = result + head
                     if read_all:
                         head = self.input_file.read(1)
+                        print("id T[0]->T[3] head : " + head)
 
                 else:
                     return result, False, head
@@ -168,6 +226,7 @@ class LexicalAnalyzer(object):
                     result = result + head
                     if read_all:
                         head = self.input_file.read(1)
+                        print("id T[1]->T[3] head : " + head)
 
                 else:
                     return result, False, head
@@ -181,12 +240,14 @@ class LexicalAnalyzer(object):
                     result = result + head
                     if read_all:
                         head = self.input_file.read(1)
+                        print("id T[3]->T[4] head : " + head)
 
                 elif head in self.NON_ZERO:
                     wdT = T[5]
                     result = result + head
                     if read_all:
                         head = self.input_file.read(1)
+                        print("id T[3]->T[5] head : " + head)
 
                 else:
                     return result, True, head
@@ -197,12 +258,14 @@ class LexicalAnalyzer(object):
                     result = result + head
                     if read_all:
                         head = self.input_file.read(1)
+                        print("id T[4]->T[4] head : " + head)
 
                 elif head in self.NON_ZERO:
                     wdT = T[5]
                     result = result + head
                     if read_all:
                         head = self.input_file.read(1)
+                        print("id T[4]->T[5] head : " + head)
 
                 else:
                     return result, True, head
@@ -213,12 +276,14 @@ class LexicalAnalyzer(object):
                     result = result + head
                     if read_all:
                         head = self.input_file.read(1)
+                        print("id T[5]->T[4] head : " + head)
 
                 elif head in self.NON_ZERO:
                     wdT = T[5]
                     result = result + head
                     if read_all:
                         head = self.input_file.read(1)
+                        print("id T[5]->T[5] head : " + head)
 
                 else:
                     return result, True, head
@@ -245,14 +310,13 @@ class LexicalAnalyzer(object):
             head = string
 
         while True:
-
-
-            if len(buf_string) != 0:
-                head = buf_string[0]
-                buf_string = buf_string[1:]
-                read_all = False
-            if len(buf_string) == 0:
-                read_all = True
+            if len(string) > 1:
+                if len(buf_string) != 0:
+                    head = buf_string[0]
+                    buf_string = buf_string[1:]
+                    read_all = False
+                if len(buf_string) == 0:
+                    read_all = True
 
             if wdT == T[0]:
                 if head in ['"']:
@@ -402,10 +466,9 @@ class LexicalAnalyzer(object):
             if (one == "") and (result == ""):
                 break
 
-            print("check two: " + one)
-            print("check sub_string: "+result)
+            print("check result & one: "+result+ " "+one)
             if (one not in self.STRING) and (result == ""):
-                print("check three: " + one)
+                #print("check three: " + one)
                 error_noti = "1Line" + str(line_num) + ": Wrong input format" + one
                 try:
                     f = open(file_name[:-2]+'_error.out','w')
@@ -476,7 +539,7 @@ class LexicalAnalyzer(object):
                     continue
 
             if result in ['-']:
-                if (len(symbol_table) != 0) or ('num' in symbol_table[-1]) or ('id' in symbol_table[-1]) or (')' in symbol_table[-1]):
+                if (len(symbol_table) != 0) and (('num' in symbol_table[-1]) or ('id' in symbol_table[-1]) or (')' in symbol_table[-1])):
                     symbol_table.append(['addsub', result])
                     result = ""
                     continue
@@ -487,14 +550,8 @@ class LexicalAnalyzer(object):
                         one = self.input_file.read(1)
                         check = True
 
-                    if one == result:
-                        symbol_table.append(['OPERATOR', result + one])
-                        result = ""
-                        check = True
-                        continue
-
-                    elif result + one in self.COMPARISON:
-                        symbol_table.append(['comp', result + one])
+                    if result + one in self.COMPARISON:
+                        symbol_table.append(['comp2', result + one])
                         result = ""
                         check = True
                         continue
@@ -505,7 +562,7 @@ class LexicalAnalyzer(object):
                         check = True
 
                     if one == "=":
-                        symbol_table.append(['comp', result + one])
+                        symbol_table.append(['comp3', result + one])
                         result = ""
                         check = True
                         continue
@@ -531,6 +588,7 @@ class LexicalAnalyzer(object):
                         symbol_table.append(['rbrace', result])
                 elif result in self.PAREN:
                     if result == '(':
+                        print("left paren find! "+str(line_num))
                         symbol_table.append(['lparen', result])
                     elif result == ')':
                         symbol_table.append(['rparen', result])
@@ -540,21 +598,19 @@ class LexicalAnalyzer(object):
                     symbol_table.append(['comma', result])
                 elif result in self.OPERATOR:
                     if result == '+':
-                        symbol_table.append(['addsub', result])
+                        symbol_table.append(['add', result])
                     elif result == '-':
-                        symbol_table.append(['addsub', result])
+                        symbol_table.append(['sub', result])
                     elif result == '*':
-                        symbol_table.append(['multdiv', result])
+                        symbol_table.append(['multi', result])
                     elif result == '/':
-                        symbol_table.append(['multdiv', result])
-                    else:
-                        symbol_table.append(['OPERATOR', result])
+                        symbol_table.append(['div', result])
                 elif result in self.COMPARISON:
-                    symbol_table.append(['comp', result])
+                    symbol_table.append(['comp4', result])
                 result = ""
                 continue
 
-            print("digit check:" + result)
+            #print("digit check:" + result)
             if result[0] in self.DIGIT + ['-']:
                 result, fact, one = self.check_int(result)
 
@@ -592,9 +648,9 @@ class LexicalAnalyzer(object):
                         else:
                             check = True
 
-            print("result: "+result)
+            #print("result: "+result)
             if result[0] in self.LETTER:
-                result, fact, one = self.check_id(result)
+                result, fact, one = self.check_id(result, one)
                 if fact:
                     symbol_table.append(['id', result])
                     result = ""
@@ -621,7 +677,7 @@ class LexicalAnalyzer(object):
                     exit()
 
             if result[0] == '"':
-                print("string result check: "+result)
+                #print("string result check: "+result)
                 result, fact, one = self.check_string(result)
                 if fact:
                     symbol_table.append(['literal', result])
