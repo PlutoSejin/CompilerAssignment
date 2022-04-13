@@ -137,7 +137,6 @@ class LexicalAnalyzer(object):
         word = ""
         letter = ""
         while True:
-            print(result_table)
             if letter == '':
                 letter = self.input_file.read(1)  # 1글자 읽어옴
             if letter == "" and word == "": # 반복문 탈출
@@ -303,8 +302,8 @@ if __name__ == '__main__':
 
         # Open file for reading
     try:
-        # file_name = sys.argv[1]
-        file_name = "test.c"
+        file_name = sys.argv[1]
+        # file_name = "test.c"
         f = open(file_name)
         # Run lexical Analyzer
         la = LexicalAnalyzer(f)
