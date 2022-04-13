@@ -172,6 +172,9 @@ class LexicalAnalyzer(object):
                     word += letter
                     letter = self.input_file.read(1)
 
+                if letter in self.DIGIT:
+                    continue
+
                 if word in self.VARIABLE:
                     result_table.append(['variable type', word])
                     word = ""
