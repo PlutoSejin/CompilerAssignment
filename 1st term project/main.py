@@ -130,11 +130,11 @@ class LexicalAnalyzer(object):
         else:
             return result, False, head"""
         sub_string = ""
-        symbol = self.LETTER + self.ZERO + self.NON_ZERO + ['_']
+        symbol = self.LETTER + self.ZERO + self.NON_ZERO
         i = 0
         j = 0
-        final = [1, 2, 3, 4, 5, 6]
-        transition_table = [[1, -1, -1, 2], [3, 4, 5, 6], [3, 4, 5, 6], [3, 4, 5, 6], [3, 4, 5, 6], [3, 4, 5, 6], [3, 4, 5, 6]]
+        final = [1, 2, 3]
+        transition_table = [[1, -1], [2, 3], [2, 3], [2, 3]]
 
         if char == "":
             char = self.input_file.read(1)
@@ -148,12 +148,8 @@ class LexicalAnalyzer(object):
         for c in id:
             if c in self.LETTER:
                 j = 0
-            elif c in self.ZERO:
+            elif c in self.DIGIT:
                 j = 1
-            elif c in self.NON_ZERO:
-                j = 2
-            elif c in ['_']:
-                j = 3
             else:
                 return sub_string, False, char
 
@@ -548,7 +544,7 @@ class LexicalAnalyzer(object):
                 if result in ['<','>']:
                     if one == "":
                         one = self.input_file.read(1)
-                        check = True
+                        check = False
 
                     if result + one in self.COMPARISON:
                         symbol_table.append(['comp2', result + one])
@@ -588,7 +584,6 @@ class LexicalAnalyzer(object):
                         symbol_table.append(['rbrace', result])
                 elif result in self.PAREN:
                     if result == '(':
-                        print("left paren find! "+str(line_num))
                         symbol_table.append(['lparen', result])
                     elif result == ')':
                         symbol_table.append(['rparen', result])
@@ -607,11 +602,12 @@ class LexicalAnalyzer(object):
                         symbol_table.append(['div', result])
                 elif result in self.COMPARISON:
                     symbol_table.append(['comp4', result])
+                    print("check comp4 check, result, one" + str(check) + " " + str(result) + " "+ str(one))
                 result = ""
                 continue
 
-            #print("digit check:" + result)
             if result[0] in self.DIGIT + ['-']:
+                print("digit check:" + result)
                 result, fact, one = self.check_int(result)
 
                 if fact:
