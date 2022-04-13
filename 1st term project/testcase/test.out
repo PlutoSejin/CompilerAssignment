@@ -5,6 +5,16 @@ variable type int
 id arc
 rparen )
 lbrace {
+variable type char
+id a
+semicolon ;
+variable type int
+id b
+assign =
+lparen (
+variable type int
+rparen )
+id a
 variable type int
 id num1
 assign =
@@ -14,14 +24,14 @@ variable type int
 id num2
 assign =
 num 1
-addsub -
+operator -
 num 2
 semicolon ;
 variable type int
 id num4
 assign =
 id num4
-addsub -
+operator -
 num 2
 semicolon ;
 variable type int
@@ -37,7 +47,7 @@ semicolon ;
 if if
 lparen (
 id a
-comparison ==
+comparison >
 id b
 rparen )
 lbrace {
@@ -66,7 +76,7 @@ lbrace {
 id num2
 assign =
 id num2
-addsub -
+operator -
 num 100
 semicolon ;
 rbrace }
