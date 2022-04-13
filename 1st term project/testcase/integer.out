@@ -1,0 +1,81 @@
+id void
+id main
+lparen (
+rparen )
+lbrace {
+variable type int
+id a
+assign =
+num 0
+semicolon ;
+variable type int
+id b
+assign =
+num 1
+semicolon ;
+variable type int
+id c
+assign =
+num 1234567890987654321
+semicolon ;
+variable type int
+id d
+assign =
+num -1
+semicolon ;
+variable type int
+id f
+assign =
+num -1234567890987654321
+semicolon ;
+variable type int
+id g
+assign =
+num 0
+semicolon ;
+variable type int
+id h
+assign =
+num 1
+semicolon ;
+variable type int
+id i
+assign =
+num 1234567890987654321
+semicolon ;
+variable type int
+id j
+assign =
+num -1
+semicolon ;
+variable type int
+id k
+assign =
+num -1234567890987654321
+semicolon ;
+variable type int
+id l
+assign =
+num 0
+semicolon ;
+variable type int
+id m
+assign =
+num 1
+semicolon ;
+variable type int
+id n
+assign =
+num 1234567890987654321
+semicolon ;
+variable type int
+id o
+assign =
+num -1
+semicolon ;
+variable type int
+id p
+assign =
+num -1234567890987654321
+semicolon ;
+rbrace }

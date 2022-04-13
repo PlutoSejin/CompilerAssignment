@@ -1,0 +1,15 @@
+variable type int
+id main
+lparen (
+rparen )
+lbrace {
+variable type int
+id b
+semicolon ;
+variable type char
+id c
+semicolon ;
+return return
+num 0
+semicolon ;
+rbrace }

@@ -1,0 +1,57 @@
+id void
+id main
+lparen (
+rparen )
+lbrace {
+variable type char
+id abc
+semicolon ;
+variable type char
+id abc
+semicolon ;
+variable type char
+id abcelse
+semicolon ;
+variable type char
+id abc123
+semicolon ;
+variable type char
+id abcabc
+semicolon ;
+variable type char
+id abc1a2b
+semicolon ;
+variable type char
+id a1b2c3
+semicolon ;
+variable type char
+id a1b2c3
+semicolon ;
+variable type char
+id a1b2c3else
+semicolon ;
+variable type char
+id a1b2c3abc
+semicolon ;
+variable type char
+id a1b2c3123
+semicolon ;
+variable type char
+id a1b2c31a2b
+semicolon ;
+variable type int
+id ifelse
+semicolon ;
+variable type int
+id if123
+semicolon ;
+variable type int
+id ifabc
+semicolon ;
+variable type int
+id if1a2b
+semicolon ;
+variable type int
+id ifelse
+semicolon ;
+rbrace }

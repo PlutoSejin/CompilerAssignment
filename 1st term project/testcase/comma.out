@@ -1,0 +1,54 @@
+id void
+id main
+lparen (
+rparen )
+lbrace {
+variable type int
+id a
+comma ,
+id b
+semicolon ;
+id float
+id c
+comma ,
+id d
+semicolon ;
+id bool
+id e
+comma ,
+id f
+semicolon ;
+variable type char
+id g
+comma ,
+id h
+comma ,
+id i
+comma ,
+id j
+comma ,
+id k
+semicolon ;
+variable type char
+id l
+comma ,
+id m
+comma ,
+id n
+comma ,
+id o
+comma ,
+id p
+semicolon ;
+variable type char
+id q
+comma ,
+id r
+comma ,
+id s
+comma ,
+id t
+comma ,
+id u
+semicolon ;
+rbrace }

@@ -1,0 +1,26 @@
+id void
+id main
+lparen (
+rparen )
+lbrace {
+variable type char
+id a
+assign =
+literal "123"
+semicolon ;
+variable type char
+id b
+assign =
+literal "abc"
+semicolon ;
+variable type char
+id c
+assign =
+literal " "
+semicolon ;
+variable type char
+id d
+assign =
+literal "Hello World 123"
+semicolon ;
+rbrace }
