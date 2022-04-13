@@ -135,6 +135,7 @@ class LexicalAnalyzer(object):
         word = ""
         letter = ""
         while True:
+            print(result_table)
             if letter == '':
                 letter = self.input_file.read(1)  # 1글자 읽어옴
             if letter == "" and word == "": # 반복문 탈출
@@ -184,9 +185,10 @@ class LexicalAnalyzer(object):
                     letter = self.input_file.read(1)
                 if word + letter in self.COMPARISON:  # =>, ==
                     result_table.append(['comparison', word])
+                    word, letter = "", ""
                 else:  # =
                     result_table.append(['assign', word])
-                word, letter = "", ""
+                    word = ""
                 continue
 
             if word in ['-']:
@@ -204,14 +206,13 @@ class LexicalAnalyzer(object):
                     if word+letter in self.COMPARISON:
                         result_table.append(['comparison', word + letter])
                         word = ""
-                        letter = ""
                         continue
                 elif word == "!":
                     if letter == "":
                         letter = self.input_file.read(1)
                     if letter == "=":
                         result_table.append(['comparison', word + letter])
-                        word, letter = "", ""
+                        word = ""
                         continue
                     else:
                         try:
@@ -224,37 +225,36 @@ class LexicalAnalyzer(object):
                             print("Fail to write file")
                             exit()
 
-                if letter in self.SEMICOLON:  # 세미콜론
-                    result_table.append(['semicolon', letter])
-                    continue
-                elif letter in self.BRACE:  # 중괄호
-                    if letter == '{':
-                        result_table.append(['lbrace', letter])
+                if word in self.SEMICOLON:  # 세미콜론
+                    result_table.append(['semicolon', word])
+                elif word in self.BRACE:  # 중괄호
+                    if word == '{':
+                        result_table.append(['lbrace', word])
                     else:
-                        result_table.append(['rbrace', letter])
-                elif letter in self.PAREN:  # 소괄호
-                    if letter == '(':
-                        result_table.append(['lparen', letter])
-                    elif letter == ')':
-                        result_table.append(['rparen', letter])
-                elif letter in self.COMMA:  # 콤마
-                    result_table.append(['comma', letter])
-                elif letter in self.OPERATOR:
-                    result_table.append(['operator', letter])
+                        result_table.append(['rbrace', word])
+                elif word in self.PAREN:  # 소괄호
+                    if word == '(':
+                        result_table.append(['lparen', word])
+                    elif word == ')':
+                        result_table.append(['rparen', word])
+                elif word in self.COMMA:  # 콤마
+                    result_table.append(['comma', word])
+                elif word in self.OPERATOR:
+                    result_table.append(['operator', word])
                 word = ""
-                letter = ""
                 continue
 
             if word[0] in self.DIGIT + ['-']:
-                integer, is_int, letter = self.check_int(word, letter)
+                word, is_int, letter = self.check_int(word, letter)
 
                 if is_int:  # int임
-                    result_table.append(['num', integer])
+                    result_table.append(['num', word])
                     word = ""
                     continue
                 else:
-                    if integer == '-':
-                        word = integer + letter
+                    if word == '-':
+                        word = word + letter
+                        letter = ""
                         continue
 
             if word[0] in self.LETTER:
