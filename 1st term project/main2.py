@@ -186,7 +186,7 @@ class LexicalAnalyzer(object):
                 if letter == "":
                     letter = self.input_file.read(1)
                 if word + letter in self.COMPARISON:  # =>, ==
-                    result_table.append(['comparison', word])
+                    result_table.append(['comparison', word+letter])
                     word, letter = "", ""
                 else:  # =
                     result_table.append(['assign', word])
