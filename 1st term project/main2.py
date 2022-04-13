@@ -34,6 +34,9 @@ class LexicalAnalyzer(object):
         current_state = 0
         final = [1, 2, 3]
         transition_table = [[1, -1], [2, 3], [2, 3], [2, 3]]
+
+        if letter == "":
+            letter = self.input_file.read(1)
         # Read string
         while letter in symbol:
             word = word + letter
@@ -66,7 +69,8 @@ class LexicalAnalyzer(object):
         symbol = ['-'] + self.DIGIT
 
         # Read string
-        letter = self.input_file.read(1)
+        if letter == "":
+            letter = self.input_file.read(1)
         while letter in symbol:
             integer = integer + letter
             letter = self.input_file.read(1)
@@ -97,7 +101,8 @@ class LexicalAnalyzer(object):
         current_state = 0
         final_state = [2]
         transition_table = [[1, -1, -1, -1], [2, 3, 4, 5], [-1, -1, -1, -1], [2, 3, 4, 5], [2, 3, 4, 5], [2, 3, 4, 5]]
-        letter = self.input_file.read(1)
+        if letter == "":
+            letter = self.input_file.read(1)
         while letter in symbol:
             total_string = total_string + letter
             letter = self.input_file.read(1)
@@ -128,20 +133,38 @@ class LexicalAnalyzer(object):
         result_table = list()
         line_number = 1
         word = ""
+        letter = ""
         while True:
-            letter = self.input_file.read(1)  # 1글자 읽어옴
-            if letter == "" and word == "":
+            if letter == '':
+                letter = self.input_file.read(1)  # 1글자 읽어옴
+            if letter == "" and word == "": # 반복문 탈출
                 break
-            if word in ['-']:
-                if (len(result_table) != 0) and (
-                        ('num' in symbol_table[-1]) or ('id' in result_table[-1]) or (')' in result_table[-1])):
-                    result_table.append(['addsub', word])
-                    word = ""
-                    continue
+
+            if letter not in self.STRING and word == "":  # ??
+                try:
+                    f = open(file_name[:-2] + '_error.out', 'w')
+                    f.write("1Line" + str(line_number) + ": Wrong input format" + letter)
+                    f.close()
+                    print("1Line" + str(line_number) + ": Wrong input format" + letter)
+                    exit()
+                except:
+                    print("Failed to write file")
+                    exit()
+            if letter == "\n":  # 엔터 입력
+                line_number += 1
+                letter = ""
+                continue
+            elif letter in self.WHITESPACE:  # whitespace
+                letter = ""
+                continue
+
             word += letter
+            letter = ""
 
             if word in self.LETTER:
-                letter = self.input_file.read(1)
+                if letter == "":
+                    letter = self.input_file.read(1)
+
                 while letter in self.LETTER:
                     word += letter
                     letter = self.input_file.read(1)
@@ -157,28 +180,70 @@ class LexicalAnalyzer(object):
                     continue
 
             if word in self.ASSIGN:
+                if letter == "":
+                    letter = self.input_file.read(1)
                 if word + letter in self.COMPARISON:  # =>, ==
                     result_table.append(['comparison', word])
                 else:  # =
                     result_table.append(['assign', word])
-                word = ""
+                word, letter = "", ""
                 continue
 
-            if word in self.MERGE + ['!']:
-                if letter == "=":  # !=
-                    result_table.append(['comparison', word + letter])
+            if word in ['-']:
+                if (len(result_table) != 0) and (
+                        ('num' in result_table[-1]) or ('id' in result_table[-1]) or (')' in result_table[-1])):
+                    result_table.append(['addsub', word])
+                    # letter = ""
                     word = ""
                     continue
-                else:
-                    try:
-                        f = open(file_name[:-2] + '_error.out', 'w')
-                        f.write("Line " + str(line_number) + ": Wrong input format")
-                        f.close()
-                        print("Line " + str(line_number) + ": Wrong input format")
-                        exit()
-                    except:
-                        print("Fail to write file")
-                        exit()
+
+            if word in self.MERGE + ['!']:
+                if word in ['<', '>']:  # <, >가 포함된 문자열
+                    if letter == "":
+                        letter = self.input_file.read(1)
+                    if word+letter in self.COMPARISON:
+                        result_table.append(['comparison', word + letter])
+                        word = ""
+                        letter = ""
+                        continue
+                elif word == "!":
+                    if letter == "":
+                        letter = self.input_file.read(1)
+                    if letter == "=":
+                        result_table.append(['comparison', word + letter])
+                        word, letter = "", ""
+                        continue
+                    else:
+                        try:
+                            f = open(file_name[:-2] + '_error.out', 'w')
+                            f.write("Line " + str(line_number) + ": Wrong input format")
+                            f.close()
+                            print("Line " + str(line_number) + ": Wrong input format")
+                            exit()
+                        except:
+                            print("Fail to write file")
+                            exit()
+
+                if letter in self.SEMICOLON:  # 세미콜론
+                    result_table.append(['semicolon', letter])
+                    continue
+                elif letter in self.BRACE:  # 중괄호
+                    if letter == '{':
+                        result_table.append(['lbrace', letter])
+                    else:
+                        result_table.append(['rbrace', letter])
+                elif letter in self.PAREN:  # 소괄호
+                    if letter == '(':
+                        result_table.append(['lparen', letter])
+                    elif letter == ')':
+                        result_table.append(['rparen', letter])
+                elif letter in self.COMMA:  # 콤마
+                    result_table.append(['comma', letter])
+                elif letter in self.OPERATOR:
+                    result_table.append(['operator', letter])
+                word = ""
+                letter = ""
+                continue
 
             if word[0] in self.DIGIT + ['-']:
                 integer, is_int, letter = self.check_int(word, letter)
@@ -208,35 +273,9 @@ class LexicalAnalyzer(object):
                     except:
                         print("Fail to write file")
                         exit()
-            if letter == "\n":  # 엔터 입력
-                line_number += 1
-                continue
-            elif letter in self.WHITESPACE:  # whitespace
-                continue
-            elif letter in self.SEMICOLON:  # 세미콜론
-                result_table.append(['semicolon', letter])
-                continue
-            elif letter in self.BRACE:  # 중괄호
-                if letter == '{':
-                    result_table.append(['lbrace', letter])
-                else:
-                    result_table.append(['rbrace', letter])
-                continue
-            elif letter in self.PAREN:  # 소괄호
-                if letter == '(':
-                    result_table.append(['lparen', letter])
-                elif letter == ')':
-                    result_table.append(['rparen', letter])
-                continue
-            elif letter in self.COMMA:  # 콤마
-                result_table.append(['comma', letter])
-                continue
-            elif letter in self.OPERATOR:
-                result_table.append(['operator', letter])
-                continue
-            elif letter == '"':  # 따옴표 만남
-                word, is_possible, letter = self.check_string(letter)
-                if is_possible:  # string이 맞음
+            if word[0] == '"':  # 따옴표 만남
+                word, is_string, letter = self.check_string(word)
+                if is_string:  # string이 맞음
                     result_table.append(['literal', word])
                     word = ""
                     continue
@@ -250,6 +289,7 @@ class LexicalAnalyzer(object):
                     except:
                         print("Fail to write file")
                         exit()
+
         return result_table
 
 
@@ -262,7 +302,7 @@ if __name__ == '__main__':
         # Open file for reading
     try:
         # file_name = sys.argv[1]
-        file_name = "arithmatic1.c"
+        file_name = "test.c"
         f = open(file_name)
         # Run lexical Analyzer
         la = LexicalAnalyzer(f)
