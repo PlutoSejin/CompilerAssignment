@@ -61,7 +61,7 @@ class LexicalAnalyzer(object):
         else:
             return sub_string, False, letter
 
-    def check_int(self, integer, letter):
+    def check_int(self, word, letter):
         sub_string = ""
         current_state = 0
         transition_table = [[1, 2, 3], [-1, -1, 3], [-1, -1, -1], [-1, 4, 5], [-1, 4, 5], [-1, 4, 5]]
@@ -72,10 +72,12 @@ class LexicalAnalyzer(object):
         if letter == "":
             letter = self.input_file.read(1)
         while letter in symbol:
-            integer = integer + letter
+            if word[-1] in self.DIGIT and letter == '-':
+                break
+            word = word + letter
             letter = self.input_file.read(1)
 
-        for c in integer:
+        for c in word:
             if c == '-':
                 current_state = transition_table[current_state][0]
             elif c in self.ZERO:
