@@ -128,9 +128,9 @@ class LexicalAnalyzer(object):
         if wdT == T[1] or wdT == T[2] or wdT == T[3]:
             return result, True, head
         else:
-            return result, False, head"""
+            return result, False, head
         sub_string = ""
-        symbol = self.LETTER + self.ZERO + self.NON_ZERO
+        symbol = self.LETTER + self.DIGIT
         i = 0
         j = 0
         final = [1, 2, 3]
@@ -163,9 +163,42 @@ class LexicalAnalyzer(object):
         if i in final:
             return sub_string, True, char
         else:
+            return sub_string, False, char"""
+
+        sub_string = ""
+        symbol = self.LETTER + self.DIGIT
+        current_state = 0
+        final = [1, 2, 3]
+        transition_table = [[1, -1], [2, 3], [2, 3], [2, 3]]
+
+        if char == "":
+            char = self.input_file.read(1)
+        # Read string
+        while char in symbol:
+            id =id + char
+            char = self.input_file.read(1)
+
+        # Analyze
+        for c in id:
+            if c in self.LETTER:
+                current_state = transition_table[current_state][0]
+            elif c in self.DIGIT:
+                current_state = transition_table[current_state][1]
+            else:
+                return sub_string, False, char
+            sub_string = sub_string + c
+
+            if current_state == -1:  # 존재하지 않는 경로
+                return sub_string, False, char
+
+        # 주어진 string 모두 확인한 후
+        if current_state in final:  # final state에 존재하는가
+            return sub_string, True, char
+        else:
             return sub_string, False, char
 
-    def check_int(self, integer):
+    def check_int(self, integer, letter):
+
         T = ["T0", "T1", "T2", "T3", "T4", "T5"]
         wdT = T[0]  # working directory T
 
@@ -293,6 +326,39 @@ class LexicalAnalyzer(object):
             return result, True, head
         else:
             return result, False, head
+        """ 
+        sub_string = ""
+        current_state = 0
+        transition_table = [[1, 2, 3], [-1, -1, 3], [-1, -1, -1], [-1, 4, 5], [-1, 4, 5], [-1, 4, 5]]
+        final_state = [2, 3, 4, 5]
+        symbol = ['-'] + self.DIGIT
+
+        # Read string
+        if letter == "":
+            letter = self.input_file.read(1)
+        while letter in symbol:
+            integer = integer + letter
+            letter = self.input_file.read(1)
+
+        for c in integer:
+            if c == '-':
+                current_state = transition_table[current_state][0]
+            elif c in self.ZERO:
+                current_state = transition_table[current_state][1]
+            elif c in self.NON_ZERO:
+                current_state = transition_table[current_state][2]
+            else:
+                return sub_string, True, letter
+            sub_string = sub_string + c
+
+            if current_state == -1:  # 존재하지 않는 경로
+                return sub_string, False, letter
+
+            # 주어진 string 모두 확인한 후
+        if current_state in final_state:  # final state에 존재하는가
+            return sub_string, True, letter
+        else:
+            return sub_string, False, letter"""
 
     def check_string(self, string):
         T = ["T0", "T1", "T2", "T3", "T4", "T5"]
@@ -608,7 +674,7 @@ class LexicalAnalyzer(object):
 
             if result[0] in self.DIGIT + ['-']:
                 print("digit check:" + result)
-                result, fact, one = self.check_int(result)
+                result, fact, one = self.check_int(result, one)
 
                 if fact:
                     if one ==".":

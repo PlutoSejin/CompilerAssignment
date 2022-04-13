@@ -29,7 +29,7 @@ class LexicalAnalyzer(object):
         self.input_file = file
 
     def check_id(self, word, letter):
-        sub_string = ""
+        tmp_word = ""
         symbol = self.LETTER + self.DIGIT
         current_state = 0
         final = [1, 2, 3]
@@ -49,20 +49,20 @@ class LexicalAnalyzer(object):
             elif c in self.DIGIT:
                 current_state = transition_table[current_state][1]
             else:
-                return sub_string, False, letter
-            sub_string = sub_string + c
+                return tmp_word, False, letter
+            tmp_word = tmp_word + c
 
             if current_state == -1:  # 존재하지 않는 경로
-                return sub_string, False, letter
+                return tmp_word, False, letter
 
         # 주어진 string 모두 확인한 후
         if current_state in final:  # final state에 존재하는가
-            return sub_string, True, letter
+            return tmp_word, True, letter
         else:
-            return sub_string, False, letter
+            return tmp_word, False, letter
 
     def check_int(self, word, letter):
-        sub_string = ""
+        tmp_word = ""
         current_state = 0
         transition_table = [[1, 2, 3], [-1, -1, 3], [-1, -1, -1], [-1, 4, 5], [-1, 4, 5], [-1, 4, 5]]
         final_state = [2, 3, 4, 5]
@@ -85,20 +85,20 @@ class LexicalAnalyzer(object):
             elif c in self.NON_ZERO:
                 current_state = transition_table[current_state][2]
             else:
-                return sub_string, True, letter
-            sub_string = sub_string + c
+                return tmp_word, True, letter
+            tmp_word = tmp_word + c
 
             if current_state == -1:  # 존재하지 않는 경로
-                return sub_string, False, letter
+                return tmp_word, False, letter
 
             # 주어진 string 모두 확인한 후
         if current_state in final_state:  # final state에 존재하는가
-            return sub_string, True, letter
+            return tmp_word, True, letter
         else:
-            return sub_string, False, letter
+            return tmp_word, False, letter
 
     def check_string(self, letter):
-        sub_string, total_string = "", ""
+        tmp_word, total_word = "", ""
         symbol = self.LETTER + [" ", '"'] + self.DIGIT
         current_state = 0
         final_state = [2]
@@ -106,11 +106,11 @@ class LexicalAnalyzer(object):
         if letter == "":
             letter = self.input_file.read(1)
         while letter in symbol:
-            total_string = total_string + letter
+            total_word = total_word + letter
             letter = self.input_file.read(1)
 
         # Analyze
-        for c in total_string:
+        for c in total_word:
             if c == '"':
                 current_state = transition_table[current_state][0]
             elif c in self.LETTER:
@@ -120,16 +120,16 @@ class LexicalAnalyzer(object):
             elif c == ' ':
                 current_state = transition_table[current_state][3]
             else:
-                return sub_string, False, letter
-            sub_string = sub_string + c
+                return tmp_word, False, letter
+            tmp_word = tmp_word + c
 
             if current_state == -1:
-                return sub_string, False, letter
+                return tmp_word, False, letter
 
         if current_state in final_state:
-            return sub_string, True, letter
+            return tmp_word, True, letter
         else:
-            return sub_string, False, letter
+            return tmp_word, False, letter
 
     def run(self):
         result_table = list()
@@ -137,7 +137,7 @@ class LexicalAnalyzer(object):
         word = ""
         letter = ""
         while True:
-            print(result_table)
+            #print(result_table)
             if letter == '':
                 letter = self.input_file.read(1)  # 1글자 읽어옴
             if letter == "" and word == "": # 반복문 탈출
@@ -185,6 +185,7 @@ class LexicalAnalyzer(object):
             if word in self.ASSIGN:
                 if letter == "":
                     letter = self.input_file.read(1)
+
                 if word + letter in self.COMPARISON:  # =>, ==
                     result_table.append(['comparison', word+letter])
                     word, letter = "", ""
@@ -307,8 +308,8 @@ if __name__ == '__main__':
 
         # Open file for reading
     try:
-        # file_name = sys.argv[1]
-        file_name = "test.c"
+        file_name = sys.argv[1]
+        # file_name = "test.c"
         f = open(file_name)
         # Run lexical Analyzer
         la = LexicalAnalyzer(f)
