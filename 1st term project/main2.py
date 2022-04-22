@@ -65,6 +65,7 @@ class LexicalAnalyzer(object):
 
     #int check하기
     def check_int(self, word, letter):
+        print("word letter"+str(word)+" "+str(letter))
         tmp_word = ""
         symbol = ['-'] + self.DIGIT  # int이기 때문에 '-'와 DIGIT만 있어야하기 때문에 symbol에 넣기
         current_state = 0 # 현재 table 위치 표시
@@ -79,6 +80,8 @@ class LexicalAnalyzer(object):
                 break
             word = word + letter
             letter = self.input_file.read(1)
+
+        print("letter: "+str(letter))
 
         # Analyze하기
         for c in word:
@@ -121,14 +124,17 @@ class LexicalAnalyzer(object):
             if c == '"': #c가 '"'이면 j를 0으로 설정
                 current_state = transition_table[current_state][0]
             elif c in self.LETTER: #c가 LETTER이면 j를 1로 설정
+                tmp_word = tmp_word + c
                 current_state = transition_table[current_state][1]
             elif c in self.DIGIT: #c가 DIGIT이면 j를 2로 설정
+                tmp_word = tmp_word + c
                 current_state = transition_table[current_state][2]
             elif c == ' ': #c가 ' '이면 j를 3으로 설정
+                tmp_word = tmp_word + c
                 current_state = transition_table[current_state][3]
             else: #c가 '"',' ',LETTER,DIGIT이 아니면
                 return tmp_word, False, letter
-            tmp_word = tmp_word + c
+
 
             if current_state == -1: # 존재하지 않는 경로
                 return tmp_word, False, letter
@@ -209,12 +215,23 @@ class LexicalAnalyzer(object):
                 continue
 
             if word in ['-']: #word가 '-'일 경우
+                #print(word)
                 if (len(result_table) != 0) and (
                         ('num' in result_table[-1]) or ('id' in result_table[-1]) or (')' in result_table[-1])): #앞에 num,id,)가 있다면 -부호가 아닌 연산자 -임.
                     result_table.append(['operator', word]) #result_talbe에 삽입
                     # letter = ""
                     word = "" #word 초기화
                     continue
+
+                letter2 = self.input_file.read(1)
+                if letter2 in self.ZERO:
+                    result_table.append(['operator', word])  # result_talbe에 삽입
+                    # letter = ""
+                    word = ""  # word 초기화
+                    word += letter2
+                    print("- word check: " + word)
+                    continue
+                word+=letter2
 
             if word in self.MERGE + ['!']:
                 if word in ['<', '>']:  # word가 <, >일 경우
