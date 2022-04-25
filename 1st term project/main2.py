@@ -176,6 +176,7 @@ class LexicalAnalyzer(object):
                 letter = "" #letter 초기화
                 continue
 
+            #print("check it: "+ word + " "+letter)
             word += letter #엔터와 whitespace가 아닐경우, word 뒤에 letter를 추가
             letter = ""
 
@@ -223,10 +224,13 @@ class LexicalAnalyzer(object):
                 letter2 = self.input_file.read(1)
                 if letter2 in self.ZERO: # -뒤에 있는 숫자가 0일 경우
                     result_table.append(['operator', word])  # result_talbe에 삽입
-                    word = ""  # word 초기화
-                    word += letter2 #먼저 읽었던 단어 추가
+                    result_table.append(['num', 0])
+                    word = ""# word 초기화
+                    #word += letter2 #먼저 읽었던 단어 추가
+                    #print("check - part"+ word + " "+ letter2)
                     continue
                 word+=letter2 #먼저 읽었던 단어 추가
+                #print("check2 - part" + word + " " + letter2)
 
             if word in self.MERGE + ['!']:
                 if word in ['<', '>']:  # word가 <, >일 경우
