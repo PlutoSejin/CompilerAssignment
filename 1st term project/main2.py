@@ -208,14 +208,14 @@ class LexicalAnalyzer(object):
                 if (len(result_table) != 0) and (
                         ('INTEGER' in result_table[-1]) or ('ID' in result_table[-1]) or (
                         ')' in result_table[-1])):  # 앞에 num,id,)가 있다면 -부호가 아닌 연산자 -임.
-                    result_table.append(['OP', word])  # result_table에 삽입
+                    result_table.append(['OPERATOR', word])  # result_table에 삽입
                     # letter = ""
                     word = ""  # word 초기화
                     continue
 
                 letter2 = self.input_file.read(1)  # 파일 한글자 더 읽기
                 if letter2 in self.ZERO:  # -뒤에 있는 숫자가 0일 경우
-                    result_table.append(['OP', word])  # result_table에 삽입
+                    result_table.append(['OPERATOR', word])  # result_table에 삽입
                     result_table.append(['INTEGER', '0'])  # result_table에 num, 0 삽입
                     word = ""  # word 초기화
                     continue
@@ -261,7 +261,7 @@ class LexicalAnalyzer(object):
                 elif word in self.COMMA:  # word가 콤마일 경우
                     result_table.append(['COMMA', word])
                 elif word in self.OPERATOR:  # word가 연산자일 경우
-                    result_table.append(['OP', word])
+                    result_table.append(['OPERATOR', word])
                 word = ""  # word 초기화
                 continue
 
