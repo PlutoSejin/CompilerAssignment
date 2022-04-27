@@ -191,6 +191,7 @@ class LexicalAnalyzer(object):
                     continue
 
             if word in self.ASSIGN:  # word가 =일 경우
+                print(letter, word)
                 if letter == "":  # letter 없을 경우
                     letter = self.input_file.read(1)  # 한 글자 읽어오기
 
@@ -199,7 +200,7 @@ class LexicalAnalyzer(object):
                     word, letter = "", ""  # word, letter 초기화
                 else:  # =일 경우
                     result_table.append(['ASSIGN', word])  # result_table에 삽입
-                    word = ""  # word 초기화
+                    word, letter = "",""  # word 초기화
                 continue
 
             if word in ['-']:  # word가 '-'일 경우
@@ -228,7 +229,7 @@ class LexicalAnalyzer(object):
 
                     if word + letter in self.COMPARISON:  # word가 <=일 경우
                         result_table.append(['COMPARISON', word + letter])  # result_table에 삽입
-                        word = ""  # word 초기화
+                        word, letter = "",""  # word 초기화
                         continue
                     elif word in self.COMPARISON:  # word가 <,>일 경우
                         result_table.append(['COMPARISON', word])  # result_table에 삽입
@@ -239,7 +240,7 @@ class LexicalAnalyzer(object):
                         letter = self.input_file.read(1)  # 한 글자 읽어오기
                     if letter == "=":  # letter가 =일 경우, 즉 word+letter가 !=일 경우
                         result_table.append(['COMPARISON', word + letter])  # result_table에 삽입
-                        word = ""  # word  초기화
+                        word, letter = "",""  # word  초기화
                         continue
                     else:
                         LexicalAnalyzer.make_error(line_number, "Invalid COMPARISON combination")  # 에러
@@ -325,6 +326,7 @@ if __name__ == '__main__':
             token = i[0]
             lexeme = i[1]
             write_f.writelines(str(token) + ' ' + str(lexeme) + '\n')
+            print(i[0], i[1])
         write_f.close()  # 파일 닫기
     except IOError as e:  # IO Error 처리
         print("Fail to read/write file " + e.filename)
