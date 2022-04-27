@@ -176,7 +176,6 @@ class LexicalAnalyzer(object):
                 letter = "" #letter 초기화
                 continue
 
-            #print("check it: "+ word + " "+letter)
             word += letter #엔터와 whitespace가 아닐경우, word 뒤에 letter를 추가
             letter = ""
 
@@ -221,13 +220,11 @@ class LexicalAnalyzer(object):
                     word = "" #word 초기화
                     continue
 
-                letter2 = self.input_file.read(1)
+                letter2 = self.input_file.read(1) #파일 한글자 더 읽기
                 if letter2 in self.ZERO: # -뒤에 있는 숫자가 0일 경우
-                    result_table.append(['operator', word])  # result_talbe에 삽입
-                    result_table.append(['num', '0'])
+                    result_table.append(['operator', word])  # result_table에 삽입
+                    result_table.append(['num', '0']) #result_table에 num, 0 삽입
                     word = ""# word 초기화
-                    #word += letter2 #먼저 읽었던 단어 추가
-                    #print("check - part"+ word + " "+ letter2)
                     continue
                 elif letter2 in self.LETTER:
                     try:  # 오류파일 생성 후 오류 메세지 적고 출력
@@ -240,7 +237,6 @@ class LexicalAnalyzer(object):
                         print("Fail to write file")
                         exit()
                 word+=letter2 #먼저 읽었던 단어 추가
-                #print("check2 - part" + word + " " + letter2)
 
             if word in self.MERGE + ['!']:
                 if word in ['<', '>']:  # word가 <, >일 경우
@@ -357,7 +353,7 @@ if __name__ == '__main__':
         print(e)
         exit()
 
-    # Visualize the result
+    #결과 출력
     for i in analyzer_table: #analyzer_table 출력
         print(i[0], i[1])
 
