@@ -224,11 +224,21 @@ class LexicalAnalyzer(object):
                 letter2 = self.input_file.read(1)
                 if letter2 in self.ZERO: # -뒤에 있는 숫자가 0일 경우
                     result_table.append(['operator', word])  # result_talbe에 삽입
-                    result_table.append(['num', 0])
+                    result_table.append(['num', '0'])
                     word = ""# word 초기화
                     #word += letter2 #먼저 읽었던 단어 추가
                     #print("check - part"+ word + " "+ letter2)
                     continue
+                elif letter2 in self.LETTER:
+                    try:  # 오류파일 생성 후 오류 메세지 적고 출력
+                        f = open(file_name[:-2] + '_error.out', 'w')
+                        f.write("Line " + str(line_number) + ": Wrong input format")
+                        f.close()
+                        print("Line " + str(line_number) + ": Wrong input format")
+                        exit()
+                    except:  # 파일이 안적힐 경우
+                        print("Fail to write file")
+                        exit()
                 word+=letter2 #먼저 읽었던 단어 추가
                 #print("check2 - part" + word + " " + letter2)
 
