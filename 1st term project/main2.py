@@ -192,7 +192,6 @@ class LexicalAnalyzer(object):
                     continue
 
             if word in self.ASSIGN:  # word가 =일 경우
-                print(letter, word)
                 if letter == "":  # letter 없을 경우
                     letter = self.input_file.read(1)  # 한 글자 읽어오기
 
@@ -329,7 +328,6 @@ if __name__ == '__main__':
             token = i[0]
             lexeme = i[1]
             write_f.writelines(str(token) + ' ' + str(lexeme) + '\n')
-            print(i[0], i[1])
         write_f.close()  # 파일 닫기
     except IOError as e:  # IO Error 처리
         print("Fail to read/write file " + e.filename)
