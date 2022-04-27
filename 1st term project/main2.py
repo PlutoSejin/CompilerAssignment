@@ -230,7 +230,7 @@ class LexicalAnalyzer(object):
 
                     if word + letter in self.COMPARISON:  # word가 <=일 경우
                         result_table.append(['COMPARISON', word + letter])  # result_table에 삽입
-                        word, letter = "",""  # word 초기화
+                        word, letter = "", ""  # word 초기화
                         continue
                     elif word in self.COMPARISON:  # word가 <,>일 경우
                         result_table.append(['COMPARISON', word])  # result_table에 삽입
@@ -241,7 +241,7 @@ class LexicalAnalyzer(object):
                         letter = self.input_file.read(1)  # 한 글자 읽어오기
                     if letter == "=":  # letter가 =일 경우, 즉 word+letter가 !=일 경우
                         result_table.append(['COMPARISON', word + letter])  # result_table에 삽입
-                        word, letter = "",""  # word  초기화
+                        word, letter = "", ""  # word  초기화
                         continue
                     else:
                         LexicalAnalyzer.make_error(line_number, "Invalid COMPARISON combination")  # 에러
@@ -277,6 +277,8 @@ class LexicalAnalyzer(object):
                         word = word + letter  # word뒤에 letter 합친 후
                         letter = ""  # letter 초기화
                         continue
+                    else:
+                        LexicalAnalyzer.make_error(line_number, "Invalid format for INT")
 
             if word[0] in self.LETTER:  # id이면
                 word, is_id, letter = self.check_id(word, letter)  # check_id에서 인자 3개 받아오기
