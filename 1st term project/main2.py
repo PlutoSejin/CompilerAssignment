@@ -226,7 +226,7 @@ class LexicalAnalyzer(object):
                     result_table.append(['num', '0']) #result_table에 num, 0 삽입
                     word = ""# word 초기화
                     continue
-                elif letter2 in self.LETTER:
+                elif letter2 in self.LETTER: #뒤에 있는 글자가 알파벳일 경우
                     try:  # 오류파일 생성 후 오류 메세지 적고 출력
                         f = open(file_name[:-2] + '_error.out', 'w')
                         f.write("Line " + str(line_number) + ": Wrong input format")
