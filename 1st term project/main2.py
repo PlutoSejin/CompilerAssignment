@@ -16,7 +16,7 @@ class LexicalAnalyzer(object):
     MERGE = BRACE + PAREN + SEMICOLON + COMMA + OPERATOR[1:] + COMPARISON
 
     # Letter 설정
-    LETTER = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q,' 'R', 'S', 'T', 'U',
+    LETTER = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U',
               'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',
               'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
     SYMBOL = ['+', '-', '*', '/', '<', '>', '"', '!'] + ASSIGN + BRACE + PAREN + SEMICOLON + COMMA
@@ -156,6 +156,7 @@ class LexicalAnalyzer(object):
                 break
 
             if letter not in self.STRING and word == "":  # 위에서 선언한 STRING에 없을 경우
+                print(letter)
                 LexicalAnalyzer.make_error(line_number, "Unsupported characters exist")
 
             if letter == "\n":  # 엔터 인식
