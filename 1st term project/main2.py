@@ -201,7 +201,7 @@ class LexicalAnalyzer(object):
                     word, letter = "", ""  # word, letter 초기화
                 else:  # =일 경우
                     result_table.append(['ASSIGN', word])  # result_table에 삽입
-                    word, letter = "",""  # word 초기화
+                    word= "" # word 초기화
                 continue
 
             if word in ['-']:  # word가 '-'일 경우
