@@ -158,7 +158,7 @@ class LexicalAnalyzer(object):
             if letter not in self.STRING and word == "":  # 위에서 선언한 STRING에 없을 경우
                 try:  # 오류파일 생성 후 오류 메세지 적고 출력
                     f = open(file_name[:-2] + '_error.out', 'w')
-                    f.write("Line" + str(line_number) + ": Wrong input format" + letter)
+                    f.write("Line" + str(line_number) + ": Unsupported characters exist." + letter)
                     f.close()
                     print("Line" + str(line_number) + ": Wrong input format" + letter)
                     exit()
@@ -189,12 +189,12 @@ class LexicalAnalyzer(object):
                     continue  # id이기 때문에 위로 이동
 
                 if word in self.VARIABLE:  # word가 variable(int,char)일 경우
-                    result_table.append(['variable type', word])  # result_table에 삽입
+                    result_table.append(['VTYPE', word])  # result_table에 삽입
                     word = ""  # word 초기화
                     continue
 
                 elif word in self.KEYWORD:  # word가 keyword(if, else, while, return)일 경우
-                    result_table.append([word, word])  # result_table에 삽입
+                    result_table.append([word.upper(), word])  # result_table에 삽입
                     word = ""  # word 초기화
                     continue
 
@@ -203,30 +203,30 @@ class LexicalAnalyzer(object):
                     letter = self.input_file.read(1)  # 한 글자 읽어오기
 
                 if word + letter in self.COMPARISON:  # word+letter가 =>,==일 경우
-                    result_table.append(['comparison', word + letter])  # result_table에 삽입
+                    result_table.append(['COMPARISON', word + letter])  # result_table에 삽입
                     word, letter = "", ""  # word, letter 초기화
                 else:  # =일 경우
-                    result_table.append(['assign', word])  # result_table에 삽입
+                    result_table.append(['ASSIGN', word])  # result_table에 삽입
                     word = ""  # word 초기화
                 continue
 
             if word in ['-']:  # word가 '-'일 경우
                 if (len(result_table) != 0) and (
-                        ('num' in result_table[-1]) or ('id' in result_table[-1]) or (
+                        ('INTEGER' in result_table[-1]) or ('ID' in result_table[-1]) or (
                         ')' in result_table[-1])):  # 앞에 num,id,)가 있다면 -부호가 아닌 연산자 -임.
-                    result_table.append(['operator', word])  # result_talbe에 삽입
+                    result_table.append(['OP', word])  # result_talbe에 삽입
                     # letter = ""
                     word = ""  # word 초기화
                     continue
 
                 letter2 = self.input_file.read(1)  # 파일 한글자 더 읽기
                 if letter2 in self.ZERO:  # -뒤에 있는 숫자가 0일 경우
-                    result_table.append(['operator', word])  # result_table에 삽입
-                    result_table.append(['num', '0'])  # result_table에 num, 0 삽입
+                    result_table.append(['OP', word])  # result_table에 삽입
+                    result_table.append(['INTEGER', '0'])  # result_table에 num, 0 삽입
                     word = ""  # word 초기화
                     continue
                 elif letter2 in self.LETTER:  # 뒤에 있는 글자가 알파벳일 경우
-                    LexicalAnalyzer.make_error(line_number) #에러
+                    LexicalAnalyzer.make_error(line_number, "Unacceptable format") #에러
                 word += letter2  # 먼저 읽었던 단어 추가
 
             if word in self.MERGE + ['!']:
@@ -235,39 +235,39 @@ class LexicalAnalyzer(object):
                         letter = self.input_file.read(1)  # 한 글자 읽어오기
 
                     if word + letter in self.COMPARISON:  # word가 <=일 경우
-                        result_table.append(['comparison', word + letter])  # result_table에 삽입
+                        result_table.append(['COMPARISON', word + letter])  # result_table에 삽입
                         word = ""  # word 초기화
                         continue
                     elif word in self.COMPARISON:  # word가 <,>일 경우
-                        result_table.append(['comparison', word])  # result_table에 삽입
+                        result_table.append(['COMPARISON', word])  # result_table에 삽입
                         word = ""  # word 초기화
                         continue
                 elif word == "!":  # word가 !일 경우
                     if letter == "":  # letter 없을 경우
                         letter = self.input_file.read(1)  # 한 글자 읽어오기
                     if letter == "=":  # letter가 =일 경우, 즉 word+letter가 !=일 경우
-                        result_table.append(['comparison', word + letter])  # result_table에 삽입
+                        result_table.append(['COMPARISON', word + letter])  # result_table에 삽입
                         word = ""  # word  초기화
                         continue
                     else:
-                        LexicalAnalyzer.make_error(line_number)#에러
+                        LexicalAnalyzer.make_error(line_number, "Invalid COMPARISON combination.")#에러
 
                 if word in self.SEMICOLON:  # word가 세미콜론일 경우
-                    result_table.append(['semicolon', word])
+                    result_table.append(['SEMI', word])
                 elif word in self.BRACE:  # word가 중괄호일 경우
                     if word == '{':
-                        result_table.append(['lbrace', word])
+                        result_table.append(['LBRACE', word])
                     else:
-                        result_table.append(['rbrace', word])
+                        result_table.append(['RBRACE', word])
                 elif word in self.PAREN:  # word가 소괄호일 경우
                     if word == '(':
-                        result_table.append(['lparen', word])
+                        result_table.append(['LPAREN', word])
                     elif word == ')':
-                        result_table.append(['rparen', word])
+                        result_table.append(['RPAREN', word])
                 elif word in self.COMMA:  # word가 콤마일 경우
-                    result_table.append(['comma', word])
+                    result_table.append(['COMMA', word])
                 elif word in self.OPERATOR:  # word가 연산자일 경우
-                    result_table.append(['operator', word])
+                    result_table.append(['OP', word])
                 word = ""  # word 초기화
                 continue
 
@@ -275,7 +275,7 @@ class LexicalAnalyzer(object):
                 word, is_int, letter = self.check_int(word, letter)  # check_int에서 인자 3개 받아오기
 
                 if is_int:  # int이면
-                    result_table.append(['num', word])  # result_table에 삽입
+                    result_table.append(['INTEGER', word])  # result_table에 삽입
                     word = ""  # word 초기화
                     continue
                 else:  # is_int가 False이면
@@ -287,30 +287,30 @@ class LexicalAnalyzer(object):
             if word[0] in self.LETTER:  # id이면
                 word, is_id, letter = self.check_id(word, letter)  # check_id에서 인자 3개 받아오기
                 if is_id:  # id이면
-                    result_table.append(['id', word])  # result_table에 삽입
+                    result_table.append(['ID', word])  # result_table에 삽입
                     word = ""  # word 초기화
                     continue
                 else:  # False이면
-                    LexicalAnalyzer.make_error(line_number)#에러
+                    LexicalAnalyzer.make_error(line_number, "Invalid format for ID.")#에러
 
             if word[0] == '"':  # string일때
                 word, is_string, letter = self.check_string(word)  # check_string에서 인자 3개 받아오기
                 if is_string:  # string이면
-                    result_table.append(['literal', word])  # result_table에 삽입
+                    result_table.append(['STRING', word])  # result_table에 삽입
                     word = ""  # word 초기화
                     continue
                 else:  # error 처리
-                    LexicalAnalyzer.make_error(line_number)#에러
+                    LexicalAnalyzer.make_error(line_number, "Invalid format for STRING")#에러
 
         return result_table  # result_table 반환
 
     @staticmethod
-    def make_error(line_number): #에러 함수
+    def make_error(line_number, error_string): #에러 함수
         try:  # 오류파일 생성 후 오류 메세지 적고 출력
             f = open(file_name[:-2] + "_error.out", 'w') #에러 파일 만들기
-            f.writelines("Line" + str(line_number) + ": Wrong input stream") #에러 내용 적기
+            f.writelines(f"Line {str(line_number)} : {error_string}") #에러 내용 적기
             f.close()
-            print("Line" + str(line_number) + ": Wrong input stream")
+            # print("Line" + str(line_number) + ": Wrong input stream")
             exit()
         except:  # 파일이 안적힐 경우
             print("Fail to write file")
@@ -321,7 +321,8 @@ class LexicalAnalyzer(object):
 if __name__ == '__main__':
     # 파일 읽기
     try:
-        file_name = sys.argv[1]
+        # file_name = sys.argv[1]
+        file_name = "comma.c"
         read_f = open(file_name)  # 파일 열기
         lexical_analyzer = LexicalAnalyzer(read_f)  # class 불러오기
         analyzer_table = lexical_analyzer.run()  # LexicalAnalyzer에서 run() 실행후 result_table을 symbol_table에 넣기
