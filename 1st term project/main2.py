@@ -156,15 +156,7 @@ class LexicalAnalyzer(object):
                 break
 
             if letter not in self.STRING and word == "":  # 위에서 선언한 STRING에 없을 경우
-                try:  # 오류파일 생성 후 오류 메세지 적고 출력
-                    f = open(file_name[:-2] + '_error.out', 'w')
-                    f.write("Line" + str(line_number) + ": Unsupported characters exist." + letter)
-                    f.close()
-                    print("Line" + str(line_number) + ": Wrong input format" + letter)
-                    exit()
-                except:  # 파일이 안적힐 경우
-                    print("Failed to write file")
-                    exit()
+                LexicalAnalyzer.make_error(line_number, "Unsupported characters exist")
 
             if letter == "\n":  # 엔터 인식
                 line_number += 1  # 다음 줄로 넘어가기
@@ -214,7 +206,7 @@ class LexicalAnalyzer(object):
                 if (len(result_table) != 0) and (
                         ('INTEGER' in result_table[-1]) or ('ID' in result_table[-1]) or (
                         ')' in result_table[-1])):  # 앞에 num,id,)가 있다면 -부호가 아닌 연산자 -임.
-                    result_table.append(['OP', word])  # result_talbe에 삽입
+                    result_table.append(['OP', word])  # result_table에 삽입
                     # letter = ""
                     word = ""  # word 초기화
                     continue
@@ -226,7 +218,7 @@ class LexicalAnalyzer(object):
                     word = ""  # word 초기화
                     continue
                 elif letter2 in self.LETTER:  # 뒤에 있는 글자가 알파벳일 경우
-                    LexicalAnalyzer.make_error(line_number, "Unacceptable format") #에러
+                    LexicalAnalyzer.make_error(line_number, "Unacceptable format")  # 에러
                 word += letter2  # 먼저 읽었던 단어 추가
 
             if word in self.MERGE + ['!']:
@@ -250,7 +242,7 @@ class LexicalAnalyzer(object):
                         word = ""  # word  초기화
                         continue
                     else:
-                        LexicalAnalyzer.make_error(line_number, "Invalid COMPARISON combination.")#에러
+                        LexicalAnalyzer.make_error(line_number, "Invalid COMPARISON combination")  # 에러
 
                 if word in self.SEMICOLON:  # word가 세미콜론일 경우
                     result_table.append(['SEMI', word])
@@ -291,7 +283,7 @@ class LexicalAnalyzer(object):
                     word = ""  # word 초기화
                     continue
                 else:  # False이면
-                    LexicalAnalyzer.make_error(line_number, "Invalid format for ID.")#에러
+                    LexicalAnalyzer.make_error(line_number, "Invalid format for ID")  # 에러
 
             if word[0] == '"':  # string일때
                 word, is_string, letter = self.check_string(word)  # check_string에서 인자 3개 받아오기
@@ -300,20 +292,20 @@ class LexicalAnalyzer(object):
                     word = ""  # word 초기화
                     continue
                 else:  # error 처리
-                    LexicalAnalyzer.make_error(line_number, "Invalid format for STRING")#에러
+                    LexicalAnalyzer.make_error(line_number, "Invalid format for STRING")  # 에러
 
         return result_table  # result_table 반환
 
     @staticmethod
-    def make_error(line_number, error_string): #에러 함수
+    def make_error(line_number, error_string):  # 에러 함수
         try:  # 오류파일 생성 후 오류 메세지 적고 출력
-            f = open(file_name[:-2] + "_error.out", 'w') #에러 파일 만들기
-            f.writelines(f"Line {str(line_number)} : {error_string}") #에러 내용 적기
+            f = open(file_name[:-2] + "_error.out", 'w')  # 에러 파일 만들기
+            f.writelines(f"Line {str(line_number)} : {error_string}")  # 에러 내용 적기
             f.close()
-            # print("Line" + str(line_number) + ": Wrong input stream")
+            print(f"Line {str(line_number)} : {error_string}")
             exit()
-        except:  # 파일이 안적힐 경우
-            print("Fail to write file")
+        except IOError as e:  # 파일이 안적힐 경우
+            print("Fail to write file " + e.filename)
             exit()
 
 
@@ -321,18 +313,14 @@ class LexicalAnalyzer(object):
 if __name__ == '__main__':
     # 파일 읽기
     try:
-        # file_name = sys.argv[1]
-        file_name = "comma.c"
+        file_name = sys.argv[1]
         read_f = open(file_name)  # 파일 열기
         lexical_analyzer = LexicalAnalyzer(read_f)  # class 불러오기
         analyzer_table = lexical_analyzer.run()  # LexicalAnalyzer에서 run() 실행후 result_table을 symbol_table에 넣기
-        # 결과 출력
-        for i in analyzer_table:  # analyzer_table 출력
-            print(i[0], i[1])
         read_f.close()  # 파일 닫기
 
         write_f = open(file_name[:-2] + '.out', 'w')
-        # out파일에 결과 적기
+        # out 파일에 결과 적기
         for i in analyzer_table:
             token = i[0]
             lexeme = i[1]
