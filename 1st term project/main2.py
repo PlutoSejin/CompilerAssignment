@@ -156,7 +156,6 @@ class LexicalAnalyzer(object):
                 break
 
             if letter not in self.STRING and word == "":  # 위에서 선언한 STRING에 없을 경우
-                print(letter)
                 LexicalAnalyzer.make_error(line_number, "Unsupported characters exist")
 
             if letter == "\n":  # 엔터 인식
