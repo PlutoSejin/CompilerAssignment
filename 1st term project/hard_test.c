@@ -1,21 +1,42 @@
 int main(char c, int d) {
-    IF a == -1
-    a != 45
-    a <= 734
-    a >= 457
-    ELSE a > -34
-    a < -245
-    else b =-3
-    if CHAR c-3
-    char if023 = "hello world"
-    int char3=a+-2
-    while hf + -4
-    d*43
-    WHILE k/32
-    d=0abc0
-    t=123if
+    int a;
+    INT b;
+    char c;
+    int d = 3;
+    IF (a == -1){
+         c="a";
+    }
+    else if (a != 45){
+        b= -3;
+    }
+    else if(a <= 734){
+        b= b-3;
+    }
+    else if(a >= 457){
+        CHAR if023 = "hello world";
+    }
+    else if(a < -245){
+        a= a+-1;
+    }
+    else if(a > -3421445){
+       a = a-1;
+    }
+    else if(a!=-500){
+        c=" "
+    }
+    ELSE{
+       while(a!=2){
+        a= a--2;
+       }
+    }
+    WHILE(a/32==2){
+       a= a*2;
+    }
+    int 0abc0;
+    int 123if;
+    int 123if0;
     k=123if0
-    j =    " "
+    int j=2;
     j--23
     return -0;
 }
