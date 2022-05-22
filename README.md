@@ -10,6 +10,9 @@
  - EunSol Kim   
 ## 1st Assignment
 ### 1. Build regular expressions, NFAs and DFAs by writing or drawing by hand
- - File at 1st term project name DFA&NFA.pdf
+ - File at 1st term project/team_03 name DFA&NFA.pdf
 ### 2. Programming
- - working
+ - Language: Python
+ - End at 2022/04/28   
+ - Test: testcase file, hard_test.c, normal_test.c
+ - File: File at 1st term project/team_03 name Lexical_Analyzer.py 
