@@ -181,12 +181,12 @@ class LexicalAnalyzer(object):
                     continue  # id이기 때문에 위로 이동
 
                 if word in self.VARIABLE:  # word가 variable(int,char)일 경우
-                    result_table.append(['VTYPE', word])  # result_table에 삽입
+                    result_table.append(['vtype', word])  # result_table에 삽입
                     word = ""  # word 초기화
                     continue
 
                 elif word in self.KEYWORD:  # word가 keyword(if, else, while, return)일 경우
-                    result_table.append([word.upper(), word])  # result_table에 삽입
+                    result_table.append([word.lower(), word])  # result_table에 삽입
                     word = ""  # word 초기화
                     continue
 
@@ -195,26 +195,26 @@ class LexicalAnalyzer(object):
                     letter = self.input_file.read(1)  # 한 글자 읽어오기
 
                 if word + letter in self.COMPARISON:  # word+letter가 =>,==일 경우
-                    result_table.append(['COMPARISON', word + letter])  # result_table에 삽입
+                    result_table.append(['comparison', word + letter])  # result_table에 삽입
                     word, letter = "", ""  # word, letter 초기화
                 else:  # =일 경우
-                    result_table.append(['ASSIGN', word])  # result_table에 삽입
+                    result_table.append(['assign', word])  # result_table에 삽입
                     word= "" # word 초기화
                 continue
 
             if word in ['-']:  # word가 '-'일 경우
                 if (len(result_table) != 0) and (
-                        ('INTEGER' in result_table[-1]) or ('ID' in result_table[-1]) or (
+                        ('num' in result_table[-1]) or ('id' in result_table[-1]) or (
                         ')' in result_table[-1])):  # 앞에 num,id,)가 있다면 -부호가 아닌 연산자 -임.
-                    result_table.append(['OPERATOR', word])  # result_table에 삽입
+                    result_table.append(['addsub', word])  # result_table에 삽입
                     # letter = ""
                     word = ""  # word 초기화
                     continue
 
                 letter2 = self.input_file.read(1)  # 파일 한글자 더 읽기
                 if letter2 in self.ZERO:  # -뒤에 있는 숫자가 0일 경우
-                    result_table.append(['OPERATOR', word])  # result_table에 삽입
-                    result_table.append(['INTEGER', '0'])  # result_table에 num, 0 삽입
+                    result_table.append(['addsub', word])  # result_table에 삽입
+                    result_table.append(['num', '0'])  # result_table에 num, 0 삽입
                     word = ""  # word 초기화
                     continue
                 elif letter2 in self.LETTER:  # 뒤에 있는 글자가 알파벳일 경우
@@ -227,39 +227,42 @@ class LexicalAnalyzer(object):
                         letter = self.input_file.read(1)  # 한 글자 읽어오기
 
                     if word + letter in self.COMPARISON:  # word가 <=일 경우
-                        result_table.append(['COMPARISON', word + letter])  # result_table에 삽입
+                        result_table.append(['comparison', word + letter])  # result_table에 삽입
                         word, letter = "", ""  # word 초기화
                         continue
                     elif word in self.COMPARISON:  # word가 <,>일 경우
-                        result_table.append(['COMPARISON', word])  # result_table에 삽입
+                        result_table.append(['comparison', word])  # result_table에 삽입
                         word = ""  # word 초기화
                         continue
                 elif word == "!":  # word가 !일 경우
                     if letter == "":  # letter 없을 경우
                         letter = self.input_file.read(1)  # 한 글자 읽어오기
                     if letter == "=":  # letter가 =일 경우, 즉 word+letter가 !=일 경우
-                        result_table.append(['COMPARISON', word + letter])  # result_table에 삽입
+                        result_table.append(['comparison', word + letter])  # result_table에 삽입
                         word, letter = "", ""  # word  초기화
                         continue
                     else:
                         LexicalAnalyzer.make_error(line_number, "Invalid COMPARISON combination")  # 에러
 
                 if word in self.SEMICOLON:  # word가 세미콜론일 경우
-                    result_table.append(['SEMI', word])
+                    result_table.append(['semi', word])
                 elif word in self.BRACE:  # word가 중괄호일 경우
                     if word == '{':
-                        result_table.append(['LBRACE', word])
+                        result_table.append(['lbrace', word])
                     else:
-                        result_table.append(['RBRACE', word])
+                        result_table.append(['rbrace', word])
                 elif word in self.PAREN:  # word가 소괄호일 경우
                     if word == '(':
-                        result_table.append(['LPAREN', word])
+                        result_table.append(['lparen', word])
                     elif word == ')':
-                        result_table.append(['RPAREN', word])
+                        result_table.append(['rparen', word])
                 elif word in self.COMMA:  # word가 콤마일 경우
-                    result_table.append(['COMMA', word])
+                    result_table.append(['comma', word])
                 elif word in self.OPERATOR:  # word가 연산자일 경우
-                    result_table.append(['OPERATOR', word])
+                    if word == '+' or word == '-':
+                        result_table.append(['addsub', word])
+                    else:
+                        result_table.append(['multdiv', word])
                 word = ""  # word 초기화
                 continue
 
@@ -267,7 +270,7 @@ class LexicalAnalyzer(object):
                 word, is_int, letter = self.check_int(word, letter)  # check_int에서 인자 3개 받아오기
 
                 if is_int:  # int이면
-                    result_table.append(['INTEGER', word])  # result_table에 삽입
+                    result_table.append(['num', word])  # result_table에 삽입
                     word = ""  # word 초기화
                     continue
                 else:  # is_int가 False이면
@@ -281,7 +284,7 @@ class LexicalAnalyzer(object):
             if word[0] in self.LETTER:  # id이면
                 word, is_id, letter = self.check_id(word, letter)  # check_id에서 인자 3개 받아오기
                 if is_id:  # id이면
-                    result_table.append(['ID', word])  # result_table에 삽입
+                    result_table.append(['id', word])  # result_table에 삽입
                     word = ""  # word 초기화
                     continue
                 else:  # False이면
@@ -290,7 +293,7 @@ class LexicalAnalyzer(object):
             if word[0] == '"':  # string일때
                 word, is_string, letter = self.check_string(word)  # check_string에서 인자 3개 받아오기
                 if is_string:  # string이면
-                    result_table.append(['STRING', word])  # result_table에 삽입
+                    result_table.append(['literal', word])  # result_table에 삽입
                     word = ""  # word 초기화
                     continue
                 else:  # error 처리
