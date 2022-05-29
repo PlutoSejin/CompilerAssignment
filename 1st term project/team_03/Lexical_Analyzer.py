@@ -195,7 +195,7 @@ class LexicalAnalyzer(object):
                     letter = self.input_file.read(1)  # 한 글자 읽어오기
 
                 if word + letter in self.COMPARISON:  # word+letter가 =>,==일 경우
-                    result_table.append(['comparison', word + letter])  # result_table에 삽입
+                    result_table.append(['comp', word + letter])  # result_table에 삽입
                     word, letter = "", ""  # word, letter 초기화
                 else:  # =일 경우
                     result_table.append(['assign', word])  # result_table에 삽입
@@ -227,18 +227,18 @@ class LexicalAnalyzer(object):
                         letter = self.input_file.read(1)  # 한 글자 읽어오기
 
                     if word + letter in self.COMPARISON:  # word가 <=일 경우
-                        result_table.append(['comparison', word + letter])  # result_table에 삽입
+                        result_table.append(['comp', word + letter])  # result_table에 삽입
                         word, letter = "", ""  # word 초기화
                         continue
                     elif word in self.COMPARISON:  # word가 <,>일 경우
-                        result_table.append(['comparison', word])  # result_table에 삽입
+                        result_table.append(['comp', word])  # result_table에 삽입
                         word = ""  # word 초기화
                         continue
                 elif word == "!":  # word가 !일 경우
                     if letter == "":  # letter 없을 경우
                         letter = self.input_file.read(1)  # 한 글자 읽어오기
                     if letter == "=":  # letter가 =일 경우, 즉 word+letter가 !=일 경우
-                        result_table.append(['comparison', word + letter])  # result_table에 삽입
+                        result_table.append(['comp', word + letter])  # result_table에 삽입
                         word, letter = "", ""  # word  초기화
                         continue
                     else:
