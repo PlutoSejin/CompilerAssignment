@@ -242,7 +242,7 @@ class LexicalAnalyzer(object):
                         word, letter = "", ""  # word  초기화
                         continue
                     else:
-                        LexicalAnalyzer.make_error(line_number, "Invalid COMPARISON combination")  # 에러
+                        LexicalAnalyzer.make_error(line_number, "Invalid comparison combination")  # 에러
 
                 if word in self.SEMICOLON:  # word가 세미콜론일 경우
                     result_table.append(['semi', word])
@@ -279,7 +279,7 @@ class LexicalAnalyzer(object):
                         letter = ""  # letter 초기화
                         continue
                     else:
-                        LexicalAnalyzer.make_error(line_number, "Invalid format for INT")
+                        LexicalAnalyzer.make_error(line_number, "Invalid format for num")
 
             if word[0] in self.LETTER:  # id이면
                 word, is_id, letter = self.check_id(word, letter)  # check_id에서 인자 3개 받아오기
@@ -288,7 +288,7 @@ class LexicalAnalyzer(object):
                     word = ""  # word 초기화
                     continue
                 else:  # False이면
-                    LexicalAnalyzer.make_error(line_number, "Invalid format for ID")  # 에러
+                    LexicalAnalyzer.make_error(line_number, "Invalid format for id")  # 에러
 
             if word[0] == '"':  # string일때
                 word, is_string, letter = self.check_string(word)  # check_string에서 인자 3개 받아오기
@@ -297,7 +297,7 @@ class LexicalAnalyzer(object):
                     word = ""  # word 초기화
                     continue
                 else:  # error 처리
-                    LexicalAnalyzer.make_error(line_number, "Invalid format for STRING")  # 에러
+                    LexicalAnalyzer.make_error(line_number, "Invalid format for literal")  # 에러
 
         return result_table  # result_table 반환
 
