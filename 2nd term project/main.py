@@ -154,7 +154,10 @@ class SyntaxAnalyzer(object):
                 return False, report
 
             # shift
-            if self.SLR_TABLE[current_state][next_input_symbol][0] == 's':
+            if self.SLR_TABLE[current_state][next_input_symbol] == 'acc':
+                return True, ''
+
+            elif self.SLR_TABLE[current_state][next_input_symbol][0] == 's':
                 # move position of spliter
                 spliter_pos = spliter_pos + 1
                 error_line = error_line + 1
