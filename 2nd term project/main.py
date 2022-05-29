@@ -143,12 +143,10 @@ class SyntaxAnalyzer(object):
 
             # next input symbol is deicded by position of spliter
             next_input_symbol = self.terminal_list[spliter_pos]
-            print(next_input_symbol, spliter_pos)
+            #print(next_input_symbol, spliter_pos)
             # next input symbol shoud be in SLR_TABLE
             # if not, error
             if next_input_symbol not in self.SLR_TABLE[current_state].keys():
-                print( self.SLR_TABLE[current_state].keys())
-                print(next_input_symbol)
                 report = "Error occurred in line " + str(error_line) + ", " + self.list_for_error_check[error_line - 1]
                 print(report)
                 return False, report
@@ -168,7 +166,7 @@ class SyntaxAnalyzer(object):
                 buf_string = self.SLR_TABLE[current_state][next_input_symbol][1:]
                 # get rule , type is list
                 buf_rule = self.RULES[buf_string].split()
-                print(buf_string, buf_rule)
+                print(buf_string, buf_rule)`
                 buf_length = len(buf_rule) - 2  # ex) 'STMT → VDECL' , we only need VDECL
                 # revise terminal list
                 for i in range(buf_length):
@@ -185,8 +183,7 @@ class SyntaxAnalyzer(object):
                 current_state = SLR_stack[-1]
                 # Print for debugging
                 #print(self.terminal_list)
-                if ((buf_rule[0] == 's') and (len(self.terminal_list) == 2) and (spliter_pos == 1)):
-                    return True, ''
+                print("check : "+str(buf_rule) +" "+str(len(self.terminal_list))+ " " +str(spliter_pos))
                 if buf_rule[0] not in self.SLR_TABLE[current_state].keys():
                     report = "Error occurred in line2 " + str(error_line) + ", " + self.list_for_error_check[
                         error_line - 1]
