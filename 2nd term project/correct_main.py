@@ -447,10 +447,8 @@ class SyntaxAnalyzer:
                 return True
 
             elif self.SLR_TABLE[current_state][next_terminal][0] == 's':
-                # move position of spliter
                 spliter_position += 1
                 self.error_row += 1
-                # push stack to next state
                 syntax_stack.append(int(self.SLR_TABLE[current_state][next_terminal][1:]))
 
             elif self.SLR_TABLE[current_state][next_terminal][0] == 'r':
@@ -458,12 +456,12 @@ class SyntaxAnalyzer:
                 reduce_cfg_rule = self.RULES[reduce_num].split()
 
                 for i in range(len(reduce_cfg_rule) - 2):
-                    if reduce_cfg_rule[2] != 'epsilon':  # if not epsilon
+                    if reduce_cfg_rule[2] != 'epsilon':
                         del self.analyzer_table[spliter_position - i - 1]
                         syntax_stack.pop()
-                if reduce_cfg_rule[2] != 'epsilon':  # if not epsilon
-                    spliter_position -= len(reduce_cfg_rule) + 3
-                else:  # if epsilon
+                if reduce_cfg_rule[2] != 'epsilon':
+                    spliter_position -= len(reduce_cfg_rule) - 3
+                else:
                     spliter_position += 1
 
                 self.analyzer_table.insert(spliter_position - 1, reduce_cfg_rule[0])
