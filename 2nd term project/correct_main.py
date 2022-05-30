@@ -306,9 +306,9 @@ class LexicalAnalyzer(object):
     def make_error(line_number, error_string):  # 에러 함수
         try:  # 오류파일 생성 후 오류 메세지 적고 출력
             f = open(file_name[:-2] + "_error.out", 'w')  # 에러 파일 만들기
-            f.writelines(f"Line {str(line_number)} : {error_string}")  # 에러 내용 적기
+            f.writelines(f"Lexical Error - Line {str(line_number)} : {error_string}")  # 에러 내용 적기
             f.close()
-            print(f"Line {str(line_number)} : {error_string}")
+            print(f"Lexical Error - Line {str(line_number)} : {error_string}")
             exit()
         except IOError as e:  # 파일이 안적힐 경우
             print("Fail to write file " + e.filename)
@@ -418,60 +418,56 @@ class SyntaxAnalyzer:
                  {'vtype': 'r14', 'id': 'r14', 'rbrace': 'r14', 'if': 'r14', 'while': 'r14', 'return': 'r14'}]
 
     analyzer_table = []   # lexical analyzer result table
-    error_table = []
-    error_row = 1
+    error_table = []   # error table
+    error_row = 1   # 에러가 발생하는 줄 저장
 
     def __init__(self, analyzer_table):
-        for row in analyzer_table:
+        for row in analyzer_table:   # lexical analyzer result table 파싱
             self.analyzer_table.append(row[0])
 
-        self.analyzer_table.append(self.END_MARK)
-        self.error_table = list(self.analyzer_table)
+        self.analyzer_table.append(self.END_MARK)   # end mark 추가
+        self.error_table = list(self.analyzer_table)    # error table 초기화
 
     def run(self):
-        if len(self.analyzer_table) == 1:
+        if len(self.analyzer_table) == 1:   # end mark만 존재하는 경우 True
             return True
 
         syntax_stack = [0]  # slr stack
-        spliter_position = 0   # spliter position
+        splitter_position = 0   # splitter position
 
         while True:
-            current_state = syntax_stack[-1]
-            next_terminal = self.analyzer_table[spliter_position]
+            current_state = syntax_stack[-1]  # 현재 위치
+            next_terminal = self.analyzer_table[splitter_position]  # 다음 symbol 가져오기
 
-            if next_terminal not in self.SLR_TABLE[current_state].keys():
+            if next_terminal not in self.SLR_TABLE[current_state].keys():   # SLR_TABLE에 없는 경우 False
                 return False
 
-            # shift
-            if self.SLR_TABLE[current_state][next_terminal] == 'acc':
+            if self.SLR_TABLE[current_state][next_terminal] == 'acc':   # acc에 도달하면 True
                 return True
 
-            elif self.SLR_TABLE[current_state][next_terminal][0] == 's':
-                spliter_position += 1
-                self.error_row += 1
-                syntax_stack.append(int(self.SLR_TABLE[current_state][next_terminal][1:]))
+            elif self.SLR_TABLE[current_state][next_terminal][0] == 's':  # Shift 수행
+                splitter_position += 1  # splitter 이동
+                self.error_row += 1  # error_row 증가
+                syntax_stack.append(int(self.SLR_TABLE[current_state][next_terminal][1:]))  # stack에 next state 추가
 
-            elif self.SLR_TABLE[current_state][next_terminal][0] == 'r':
-                reduce_num = self.SLR_TABLE[current_state][next_terminal][1:]
-                reduce_cfg_rule = self.RULES[reduce_num].split()
+            elif self.SLR_TABLE[current_state][next_terminal][0] == 'r':  # Reduce 수행
+                reduce_num = self.SLR_TABLE[current_state][next_terminal][1:]  # Reduce number 파싱
+                reduce_cfg_rule = self.RULES[reduce_num].split()  # 해당 state의 Rule
 
-                for i in range(len(reduce_cfg_rule) - 2):
-                    if reduce_cfg_rule[2] != 'epsilon':
-                        del self.analyzer_table[spliter_position - i - 1]
-                        syntax_stack.pop()
-                if reduce_cfg_rule[2] != 'epsilon':
-                    spliter_position -= len(reduce_cfg_rule) - 3
-                else:
-                    spliter_position += 1
+                for i in range(len(reduce_cfg_rule) - 2):  # Ex) A -> B인 경우 B만 사용
+                    if reduce_cfg_rule[2] != 'epsilon':  # 생성 규칙이 epsilon이 아닌 경우
+                        del self.analyzer_table[splitter_position - i - 1]  # table에서 해당하는 요소 삭제
+                        syntax_stack.pop()  # stack에서 삭제
+                if reduce_cfg_rule[2] != 'epsilon':  # 생성 규칙이 epsilon이 아닌 경우
+                    splitter_position -= len(reduce_cfg_rule) - 3  # splitter position 재조정
+                else:  # 생성 규칙이 epsilon인 경우
+                    splitter_position += 1  # splitter position 1 증가
 
-                self.analyzer_table.insert(spliter_position - 1, reduce_cfg_rule[0])
-                current_state = syntax_stack[-1]
-                if reduce_cfg_rule[0] not in self.SLR_TABLE[current_state].keys():
+                self.analyzer_table.insert(splitter_position - 1, reduce_cfg_rule[0])  # reduce 수행
+                current_state = syntax_stack[-1]  # current_state 위치 수정
+                if reduce_cfg_rule[0] not in self.SLR_TABLE[current_state].keys():  # reduce한 rule이 SLR_TABLE에 존재하지 않는 경우 False
                     return False
-                syntax_stack.append(self.SLR_TABLE[current_state][reduce_cfg_rule[0]])
-
-    def print_error(self):
-        return f"Line {str(self.error_row)} : {self.error_table[self.error_row-1]}"
+                syntax_stack.append(self.SLR_TABLE[current_state][reduce_cfg_rule[0]])  # GOTO(current_state, reduce_cfg_rule[0]) 삽입
 
 
 if __name__ == "__main__":
@@ -490,18 +486,19 @@ if __name__ == "__main__":
             write_f.writelines(str(token) + ' ' + str(lexeme) + '\n')
         write_f.close()  # 파일 닫기
 
-        syntax_analyzer = SyntaxAnalyzer(analyzer_table)
-        is_accepted = syntax_analyzer.run()
+        syntax_analyzer = SyntaxAnalyzer(analyzer_table)  # SyntaxAnalyzer 초기화
+        is_accepted = syntax_analyzer.run()  # SyntaxAnalyzer에서 run() 실행 후 Accept 여부 받아오기
 
-        if is_accepted:
+        if is_accepted:  # Accept
             print("This Program is Accepted")
-        else:
+        else:  # Reject
             print("This Program is Rejected")
-            try:
+            try:  # 에러 파일 처리
                 syntax_error_f = open(file_name[:-2] + '_error.out', 'w')
-                syntax_error_f.write(f"Line {syntax_analyzer.error_row} : {syntax_analyzer.error_table[syntax_analyzer.error_row - 1]}")
+                print(f"Syntax Error - Line {syntax_analyzer.error_row} : {syntax_analyzer.error_table[syntax_analyzer.error_row - 1]}")
+                syntax_error_f.write(f"Syntax Error - Line {syntax_analyzer.error_row} : {syntax_analyzer.error_table[syntax_analyzer.error_row - 1]}")
                 syntax_error_f.close()
-            except IOError as e:
+            except IOError as e:  # IO Error 처리
                 print("Fail to read/write file " + e.filename)
                 exit()
 
