@@ -428,7 +428,7 @@ class SyntaxAnalyzer:
         self.analyzer_table.append(self.END_MARK)   # end mark 추가
         self.error_table = list(self.analyzer_table)    # error table 초기화
 
-    def run(self):
+    def parse(self):
         if len(self.analyzer_table) == 1:   # end mark만 존재하는 경우 True
             return True
 
@@ -487,7 +487,7 @@ if __name__ == "__main__":
         write_f.close()  # 파일 닫기
 
         syntax_analyzer = SyntaxAnalyzer(analyzer_table)  # SyntaxAnalyzer 초기화
-        is_accepted = syntax_analyzer.run()  # SyntaxAnalyzer에서 run() 실행 후 Accept 여부 받아오기
+        is_accepted = syntax_analyzer.parse()  # SyntaxAnalyzer에서 run() 실행 후 Accept 여부 받아오기
 
         if is_accepted:  # Accept
             print("This Program is Accepted")
