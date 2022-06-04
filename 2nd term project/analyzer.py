@@ -75,11 +75,12 @@ class LexicalAnalyzer(object):
         if letter == "":  # letter가 아무것도 없으면 단어 추가하기
             letter = self.input_file.read(1)
 
-        while letter in symbol:  # 인자로 들어온 word 뒤에 추가할 인자가 있는지 확인, 만약 있다면 while로 계속 추가하기
-            if word[-1] in self.DIGIT and letter == '-':  # 만약 앞에 있는 숫자가 있고 새로 받은 단어가 -면 break
-                break
-            word = word + letter
-            letter = self.input_file.read(1)
+        if word not in self.ZERO: #맨 앞자리가 0이 아닐 경우
+            while letter in symbol:  # 인자로 들어온 word 뒤에 추가할 인자가 있는지 확인, 만약 있다면 while로 계속 추가하기
+                if word[-1] in self.DIGIT and letter == '-':  # 만약 앞에 있는 숫자가 있고 새로 받은 단어가 -면 break
+                    break
+                word = word + letter
+                letter = self.input_file.read(1)
 
         # Analyze하기
         for c in word:
@@ -200,7 +201,7 @@ class LexicalAnalyzer(object):
                     word, letter = "", ""  # word, letter 초기화
                 else:  # =일 경우
                     result_table.append(['assign', word])  # result_table에 삽입
-                    word= "" # word 초기화
+                    word = ""  # word 초기화
                 continue
 
             if word in ['-']:  # word가 '-'일 경우
@@ -363,11 +364,13 @@ class SyntaxAnalyzer:
                  {'id': 's13'},
                  {'lbrace': 's14'},
                  {'rparen': 'r9', 'comma': 's16', 'MOREARGS': 15},
-                 {'vtype': 's23', 'id': 's20', 'rbrace': 'r11', 'if': 's21', 'while': 's22', 'return': 'r11', 'VDECL': 19, 'BLOCK': 17, 'STMT': 18},
+                 {'vtype': 's23', 'id': 's20', 'rbrace': 'r11', 'if': 's21', 'while': 's22', 'return': 'r11',
+                  'VDECL': 19, 'BLOCK': 17, 'STMT': 18},
                  {'rparen': 'r6'},
                  {'vtype': 's24'},
                  {'return': 's26', 'RETURN': 25},
-                 {'vtype': 's23', 'id': 's20', 'rbrace': 'r11', 'if': 's21', 'while': 's22', 'return': 'r11', 'VDECL': 19, 'BLOCK': 27, 'STMT': 18},
+                 {'vtype': 's23', 'id': 's20', 'rbrace': 'r11', 'if': 's21', 'while': 's22', 'return': 'r11',
+                  'VDECL': 19, 'BLOCK': 27, 'STMT': 18},
                  {'vtype': 'r12', 'id': 'r12', 'rbrace': 'r12', 'if': 'r12', 'while': 'r12', 'return': 'r12'},
                  {'assign': 's28'},
                  {'lparen': 's29'},
@@ -377,7 +380,8 @@ class SyntaxAnalyzer:
                  {'rbrace': 's33'},
                  {'id': 's36', 'lparen': 's35', 'num': 's37', 'FACTOR': 34},
                  {'rbrace': 'r10', 'return': 'r10'},
-                 {'id': 's36', 'lparen': 's35', 'literal': 's40', 'num': 's37', 'RHS': 38, 'EXPR': 39, 'TERM': 41, 'FACTOR': 42},
+                 {'id': 's36', 'lparen': 's35', 'literal': 's40', 'num': 's37', 'RHS': 38, 'EXPR': 39, 'TERM': 41,
+                  'FACTOR': 42},
                  {'id': 's36', 'lparen': 's35', 'num': 's37', 'FACTOR': 44, 'COND': 43},
                  {'id': 's36', 'lparen': 's35', 'num': 's37', 'FACTOR': 44, 'COND': 45},
                  {'semi': 's8'},
@@ -405,44 +409,47 @@ class SyntaxAnalyzer:
                  {'semi': 'r22', 'rparen': 'r22', 'addsub': 'r22', 'multdiv': 'r22', 'comp': 'r22'},
                  {'semi': 'r18', 'rparen': 'r18'},
                  {'semi': 'r20', 'rparen': 'r20', 'addsub': 'r20'},
-                 {'vtype': 's23', 'id': 's20', 'rbrace': 'r11', 'if': 's21', 'while': 's22', 'return': 'r11', 'VDECL': 19, 'BLOCK': 61, 'STMT': 18},
+                 {'vtype': 's23', 'id': 's20', 'rbrace': 'r11', 'if': 's21', 'while': 's22', 'return': 'r11',
+                  'VDECL': 19, 'BLOCK': 61, 'STMT': 18},
                  {'rparen': 'r25'},
-                 {'vtype': 's23', 'id': 's20', 'rbrace': 'r11', 'if': 's21', 'while': 's22', 'return': 'r11', 'VDECL': 19, 'BLOCK': 62, 'STMT': 18},
+                 {'vtype': 's23', 'id': 's20', 'rbrace': 'r11', 'if': 's21', 'while': 's22', 'return': 'r11',
+                  'VDECL': 19, 'BLOCK': 62, 'STMT': 18},
                  {'rbrace': 's63'},
                  {'rbrace': 's64'},
                  {'else': 's65'},
                  {'vtype': 'r15', 'id': 'r15', 'rbrace': 'r15', 'if': 'r15', 'while': 'r15', 'return': 'r15'},
                  {'lbrace': 's66'},
-                 {'vtype': 's23', 'id': 's20', 'rbrace': 'r11', 'if': 's21', 'while': 's22', 'return': 'r11', 'VDECL': 19, 'BLOCK': 67, 'STMT': 18},
+                 {'vtype': 's23', 'id': 's20', 'rbrace': 'r11', 'if': 's21', 'while': 's22', 'return': 'r11',
+                  'VDECL': 19, 'BLOCK': 67, 'STMT': 18},
                  {'rbrace': 's68'},
                  {'vtype': 'r14', 'id': 'r14', 'rbrace': 'r14', 'if': 'r14', 'while': 'r14', 'return': 'r14'}]
 
-    analyzer_table = []   # lexical analyzer result table
-    error_table = []   # error table
-    error_row = 1   # 에러가 발생하는 줄 저장
+    analyzer_table = []  # lexical analyzer result table
+    error_table = []  # error table
+    error_row = 1  # 에러가 발생하는 줄 저장
 
     def __init__(self, analyzer_table):
-        for row in analyzer_table:   # lexical analyzer result table 파싱
+        for row in analyzer_table:  # lexical analyzer result table 파싱
             self.analyzer_table.append(row[0])
 
-        self.analyzer_table.append(self.END_MARK)   # end mark 추가
-        self.error_table = list(self.analyzer_table)    # error table 초기화
+        self.analyzer_table.append(self.END_MARK)  # end mark 추가
+        self.error_table = list(self.analyzer_table)  # error table 초기화
 
     def parse(self):
-        if len(self.analyzer_table) == 1:   # end mark만 존재하는 경우 True
+        if len(self.analyzer_table) == 1:  # end mark만 존재하는 경우 True
             return True
 
         syntax_stack = [0]  # slr stack
-        splitter_position = 0   # splitter position
+        splitter_position = 0  # splitter position
 
         while True:
             current_state = syntax_stack[-1]  # 현재 위치
             next_terminal = self.analyzer_table[splitter_position]  # 다음 symbol 가져오기
 
-            if next_terminal not in self.SLR_TABLE[current_state].keys():   # SLR_TABLE에 없는 경우 False
+            if next_terminal not in self.SLR_TABLE[current_state].keys():  # SLR_TABLE에 없는 경우 False
                 return False
 
-            if self.SLR_TABLE[current_state][next_terminal] == 'acc':   # acc에 도달하면 True
+            if self.SLR_TABLE[current_state][next_terminal] == 'acc':  # acc에 도달하면 True
                 return True
 
             elif self.SLR_TABLE[current_state][next_terminal][0] == 's':  # Shift 수행
@@ -465,9 +472,11 @@ class SyntaxAnalyzer:
 
                 self.analyzer_table.insert(splitter_position - 1, reduce_cfg_rule[0])  # reduce 수행
                 current_state = syntax_stack[-1]  # current_state 위치 수정
-                if reduce_cfg_rule[0] not in self.SLR_TABLE[current_state].keys():  # reduce한 rule이 SLR_TABLE에 존재하지 않는 경우 False
+                if reduce_cfg_rule[0] not in self.SLR_TABLE[
+                    current_state].keys():  # reduce한 rule이 SLR_TABLE에 존재하지 않는 경우 False
                     return False
-                syntax_stack.append(self.SLR_TABLE[current_state][reduce_cfg_rule[0]])  # GOTO(current_state, reduce_cfg_rule[0]) 삽입
+                syntax_stack.append(
+                    self.SLR_TABLE[current_state][reduce_cfg_rule[0]])  # GOTO(current_state, reduce_cfg_rule[0]) 삽입
 
 
 if __name__ == "__main__":
@@ -495,8 +504,10 @@ if __name__ == "__main__":
             print("This Program is Rejected")
             try:  # 에러 파일 처리
                 syntax_error_f = open(file_name[:-2] + '_error.out', 'w')
-                print(f"Syntax Error - Line {syntax_analyzer.error_row} : {syntax_analyzer.error_table[syntax_analyzer.error_row - 1]}")
-                syntax_error_f.write(f"Syntax Error - Line {syntax_analyzer.error_row} : {syntax_analyzer.error_table[syntax_analyzer.error_row - 1]}")
+                print(
+                    f"Syntax Error - Line {syntax_analyzer.error_row} : {syntax_analyzer.error_table[syntax_analyzer.error_row - 1]}")
+                syntax_error_f.write(
+                    f"Syntax Error - Line {syntax_analyzer.error_row} : {syntax_analyzer.error_table[syntax_analyzer.error_row - 1]}")
                 syntax_error_f.close()
             except IOError as e:  # IO Error 처리
                 print("Fail to read/write file " + e.filename)
