@@ -134,17 +134,17 @@ class SyntaxAnalyzer(object):
 
         SLR_stack = [0]  # stack
         spliter_pos = 0  # position of spliter
-        error_line = 1
+        error_line = 1  # error line check
 
         while (True):
             # current state
             current_state = SLR_stack[-1]
             print("current_state: "+ str(current_state))
 
-            # next input symbol is deicded by position of spliter
+            # next input symbol is decided by position of spliter
             next_input_symbol = self.terminal_list[spliter_pos]
-            #print(next_input_symbol, spliter_pos)
-            # next input symbol shoud be in SLR_TABLE
+            print(f"next_input_symbol : {next_input_symbol}, spliter_pos : {spliter_pos}")
+            # next input symbol should be in SLR_TABLE
             # if not, error
             if next_input_symbol not in self.SLR_TABLE[current_state].keys():
                 report = "Error occurred in line " + str(error_line) + ", " + self.list_for_error_check[error_line - 1]
@@ -166,14 +166,16 @@ class SyntaxAnalyzer(object):
                 buf_string = self.SLR_TABLE[current_state][next_input_symbol][1:]
                 # get rule , type is list
                 buf_rule = self.RULES[buf_string].split()
-                print(buf_string, buf_rule)`
+                print(f"buf_string : {buf_string}, buf_rule : {buf_rule}")
                 buf_length = len(buf_rule) - 2  # ex) 'STMT → VDECL' , we only need VDECL
                 # revise terminal list
                 for i in range(buf_length):
                     if (buf_rule[2] != 'epsilon'):  # if not epsilon
                         # pop out from stack
+                        print(f"SLR_stack : {SLR_stack}, terminal_list : {self.terminal_list}")
                         SLR_stack.pop()
-                        self.terminal_list.pop(spliter_pos - i - 1)
+                        print(f"pop : {self.terminal_list.pop(spliter_pos - i - 1)}")
+                        print(f"modified terminal_list : {self.terminal_list}")
                 if (buf_rule[2] != 'epsilon'):  # if not epsilon
                     spliter_pos = spliter_pos - buf_length + 1
                 else:  # if epsilon
@@ -182,10 +184,10 @@ class SyntaxAnalyzer(object):
                 self.terminal_list.insert(spliter_pos - 1, buf_rule[0])
                 current_state = SLR_stack[-1]
                 # Print for debugging
-                #print(self.terminal_list)
+                print(self.terminal_list)
                 print("check : "+str(buf_rule) +" "+str(len(self.terminal_list))+ " " +str(spliter_pos))
                 if buf_rule[0] not in self.SLR_TABLE[current_state].keys():
-                    report = "Error occurred in line2 " + str(error_line) + ", " + self.list_for_error_check[
+                    report = "Error occurred in line " + str(error_line) + ", " + self.list_for_error_check[
                         error_line - 1]
                     #print(report)
                     return False, report
